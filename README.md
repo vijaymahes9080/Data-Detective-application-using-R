@@ -20,6 +20,25 @@ Data practitioners spend up to 80% of their analysis time discovering data quali
 
 ---
 
+## Visual Tour & Interface Preview
+
+### 1. Executive Dashboard & Quality Indicator
+The central dashboard displays real-time KPI metric cards, an automated executive summary narrative, a transparent Data Quality status gauge (scored 0–100 with deduction breakdowns), and an interactive dataset preview table.
+
+![Executive Dashboard Overview](assets/dashboard_overview.png)
+
+### 2. Statistical Outliers & Distribution Diagnostics
+Univariate and multivariate diagnostics featuring Tukey $1.5 \times \text{IQR}$ threshold boundary lines, empirical density curves, Pearson correlation heatmaps, and multicollinearity alerts ($|r| \ge 0.70$).
+
+![Statistical Outliers and Correlation Heatmap](assets/analytics_investigation.png)
+
+### 3. Dataset Investigation Center Dossier
+A central findings repository categorizing detected data-quality issues into **High**, **Warning**, and **Info** severity tiers, providing transparent numerical evidence, reasoning, and actionable next steps.
+
+![Dataset Investigation Center](assets/investigation_center.png)
+
+---
+
 ## 2. Objectives
 
 - **Automated Profiling:** Instant computation of variable types, memory footprint, completeness, and central tendencies.
@@ -64,6 +83,13 @@ Data-Detective/
 ├── LICENSE                        # MIT License
 ├── README.md                      # Comprehensive project documentation
 ├── .gitignore                     # R and OS exclusions
+├── linkedin.md                    # Ready-to-use LinkedIn announcement copy
+├── image.png                      # LinkedIn post visual asset
+│
+├── assets/                        # High-resolution light-theme UI screenshots
+│   ├── dashboard_overview.png
+│   ├── analytics_investigation.png
+│   └── investigation_center.png
 │
 ├── R/                             # Modular Analytical Engines
 │   ├── utility_functions.R        # Formatting, safe moments, and data type detection
