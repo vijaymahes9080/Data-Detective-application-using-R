@@ -6,24 +6,31 @@
 
 # ---- Formatting Helpers -----------------------------------------------------
 
-#' Format large numbers with commas
+#' Format large numbers with commas (vectorized-safe for R 4.3+)
 format_number <- function(x) {
-  if (is.null(x) || is.na(x)) return("0")
-  formatC(as.numeric(x), format = "d", big.mark = ",")
+  if (is.null(x) || length(x) == 0) return("0")
+  vapply(x, function(val) {
+    if (is.na(val)) return("0")
+    formatC(as.numeric(val), format = "d", big.mark = ",")
+  }, character(1))
 }
 
-#' Format percentages
+#' Format percentages (safe for R 4.3+)
 format_pct <- function(x, digits = 1) {
-  if (is.null(x) || is.na(x)) return("0.0%")
-  paste0(formatC(as.numeric(x) * 100, format = "f", digits = digits), "%")
+  if (is.null(x) || length(x) == 0) return("0.0%")
+  vapply(x, function(val) {
+    if (is.na(val)) return("0.0%")
+    paste0(formatC(as.numeric(val) * 100, format = "f", digits = digits), "%")
+  }, character(1))
 }
 
-#' Format byte sizes
+#' Format byte sizes (safe for R 4.3+)
 format_bytes <- function(bytes) {
-  if (is.null(bytes) || is.na(bytes) || bytes <= 0) return("0 B")
+  if (is.null(bytes) || length(bytes) == 0 || is.na(bytes[1]) || bytes[1] <= 0) return("0 B")
+  b <- bytes[1]
   units <- c("B", "KB", "MB", "GB", "TB")
-  power <- min(floor(log(bytes, base = 1024)), length(units) - 1)
-  val <- bytes / (1024 ^ power)
+  power <- min(floor(log(b, base = 1024)), length(units) - 1)
+  val <- b / (1024 ^ power)
   paste0(round(val, 2), " ", units[power + 1])
 }
 

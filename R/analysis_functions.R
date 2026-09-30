@@ -796,7 +796,16 @@ generate_findings <- function(profile, missing_res, dup_res, out_res, const_df, 
     }
   }
 
-  f_df <- if (length(f_list) > 0) do.call(rbind, lapply(f_list, as.data.frame, stringsAsFactors = FALSE)) else data.frame()
+  f_df <- if (length(f_list) > 0) {
+    do.call(rbind, lapply(f_list, as.data.frame, stringsAsFactors = FALSE))
+  } else {
+    data.frame(
+      category = character(0), severity = character(0),
+      column = character(0), message = character(0),
+      evidence = character(0), recommendation = character(0),
+      stringsAsFactors = FALSE
+    )
+  }
 
   return(f_df)
 }

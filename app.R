@@ -83,7 +83,7 @@ ui <- bslib::page_sidebar(
     # Security & Privacy badge
     div(
       class = "mt-4 p-2 bg-light border rounded small text-muted text-center",
-      icon("shield-check", class = "text-success me-1"),
+      icon("shield-halved", class = "text-success me-1"),
       "100% Client/Local Processing. No dataset leaves your browser."
     )
   ),
