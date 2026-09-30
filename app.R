@@ -17,7 +17,6 @@ for (f in r_files) {
   source(f, local = FALSE)
 }
 
-# Theme definition using bslib
 # Theme definition using bslib (WebAssembly / Shinylive compatible, font loaded via CSS)
 theme_custom <- bslib::bs_theme(
   version = 5,
@@ -314,25 +313,37 @@ server <- function(input, output, session) {
 
   findings_res <- reactive({
     req(profile_res(), missing_res(), duplicate_res(), outlier_res(), corr_res())
-    generate_findings(
-      profile = profile_res(),
-      missing_res = missing_res(),
-      dup_res = duplicate_res(),
-      out_res = outlier_res(),
-      const_df = constant_df(),
-      corr_res = corr_res(),
-      leak_res = leakage_res(),
-      bias_res = bias_res()
+    tryCatch(
+      generate_findings(
+        profile    = profile_res(),
+        missing_res = missing_res(),
+        dup_res    = duplicate_res(),
+        out_res    = outlier_res(),
+        const_df   = constant_df(),
+        corr_res   = corr_res(),
+        leak_res   = leakage_res(),
+        bias_res   = bias_res()
+      ),
+      error = function(e) {
+        message("generate_findings error: ", e$message)
+        data.frame(
+          category = character(0), severity = character(0),
+          column = character(0), message = character(0),
+          evidence = character(0), recommendation = character(0),
+          stringsAsFactors = FALSE
+        )
+      }
     )
   })
 
   # ---- Top Dashboard KPI Cards Row (Section 4 & 19) -------------------------
   output$top_summary_cards <- renderUI({
-    req(profile_res(), missing_res(), duplicate_res(), findings_res())
+    req(profile_res(), missing_res(), duplicate_res())
     p <- profile_res()
     m <- missing_res()
     d <- duplicate_res()
-    f <- findings_res()
+    f <- tryCatch(findings_res(), error = function(e) NULL)
+    n_issues <- if (is.null(f) || !is.data.frame(f)) 0L else nrow(f)
 
     div(
       class = "metrics-grid mb-3",
@@ -342,9 +353,10 @@ server <- function(input, output, session) {
       div(class = "metric-card", div(class = "metric-title", "DUPLICATE ROWS"), div(class = "metric-value", format_number(d$duplicate_rows_count))),
       div(class = "metric-card", div(class = "metric-title", "NUMERIC VARS"), div(class = "metric-value", p$n_numeric)),
       div(class = "metric-card", div(class = "metric-title", "CATEGORICAL VARS"), div(class = "metric-value", p$n_categorical)),
-      div(class = "metric-card card-alert", div(class = "metric-title", "POTENTIAL ISSUES"), div(class = "metric-value", nrow(f)))
+      div(class = "metric-card card-alert", div(class = "metric-title", "POTENTIAL ISSUES"), div(class = "metric-value", n_issues))
     )
   })
+
 
   # Settings Modal
   observeEvent(input$btn_settings, {
@@ -360,7 +372,7 @@ server <- function(input, output, session) {
   })
 
   # ---- Submodule Servers ----------------------------------------------------
-  mod_overview_server("mod_overview", data_r = dataset, profile_r = profile_res, issues_count_r = reactive(nrow(findings_res())))
+  mod_overview_server("mod_overview", data_r = dataset, profile_r = profile_res, issues_count_r = reactive({ f <- findings_res(); if (is.null(f) || !is.data.frame(f)) 0L else nrow(f) }))
   mod_quality_server("mod_quality", quality_r = quality_res, findings_r = findings_res)
   mod_missing_server("mod_missing", missing_r = missing_res)
   mod_duplicates_server("mod_duplicates", duplicate_r = duplicate_res)

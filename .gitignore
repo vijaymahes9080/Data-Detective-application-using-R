@@ -32,3 +32,6 @@ Thumbs.db
 desktop.ini
 *.tmp
 *.log
+
+# Backed-up conflicting R source files (do not deploy)
+R/_backup_removed/
