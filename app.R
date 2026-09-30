@@ -1,10 +1,9 @@
 # ==============================================================================
 # DATA DETECTIVE: Automated Dataset Investigation Platform
-# Production-Quality R + Shiny Application
-# Tagline: "Upload. Investigate. Understand."
+# Full Modular R + Shiny Application
+# Shinylive / WebAssembly Compatible | GitHub Pages Ready
 # ==============================================================================
 
-# Suppress startup package messages
 suppressPackageStartupMessages({
   library(shiny)
   library(bslib)
@@ -12,20 +11,14 @@ suppressPackageStartupMessages({
   library(ggplot2)
 })
 
-# Source all analytical engine scripts in R/
-r_scripts <- list.files("R", pattern = "\\.R$", full.names = TRUE)
-for (script in r_scripts) {
-  source(script, local = FALSE)
+# Source all analytical functions and modules in R/
+r_files <- list.files("R", pattern = "\\.R$", full.names = TRUE)
+for (f in r_files) {
+  source(f, local = FALSE)
 }
 
-# Source all UI and server modules in modules/
-mod_scripts <- list.files("modules", pattern = "\\.R$", full.names = TRUE)
-for (mscript in mod_scripts) {
-  source(mscript, local = FALSE)
-}
-
-# Define modern theme using bslib
-app_theme <- bslib::bs_theme(
+# Theme definition using bslib
+theme_custom <- bslib::bs_theme(
   version = 5,
   bootswatch = "zephyr",
   primary = "#2563eb",
@@ -39,447 +32,347 @@ app_theme <- bslib::bs_theme(
 )
 
 # ---- Application UI ---------------------------------------------------------
-ui <- tagList(
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "style.css"),
-    tags$title("Data Detective | Automated Dataset Investigation Platform")
+ui <- bslib::page_sidebar(
+  theme = theme_custom,
+  title = div(
+    class = "d-flex align-items-center gap-2",
+    icon("magnifying-glass-chart", class = "text-primary"),
+    span(class = "fw-bold", "DATA DETECTIVE"),
+    span(class = "text-muted fs-6 d-none d-md-inline", "| Automated Dataset Investigation & Data Quality Intelligence")
   ),
 
-  # Header with branding and persistent dataset status indicator
-  div(
-    class = "app-header",
-    div(
-      h1(class = "brand-title", icon("magnifying-glass-chart"), " DATA DETECTIVE"),
-      p(class = "brand-subtitle", "Discover data quality issues, statistical patterns, anomalies, and relationships before they become problems.")
+  # ---- Sidebar --------------------------------------------------------------
+  sidebar = bslib::sidebar(
+    width = 300,
+    open = "desktop",
+    title = "Dataset & Controls",
+
+    # Upload Section
+    h6(class = "fw-bold text-uppercase text-muted small mb-2", "Upload Dataset"),
+    fileInput(
+      "user_file",
+      label = NULL,
+      accept = c(".csv", ".tsv", ".txt", ".rds"),
+      buttonLabel = "Choose Dataset",
+      placeholder = "Upload .csv...",
+      width = "100%"
     ),
+
+    # Sample Datasets
     div(
-      class = "d-flex align-items-center gap-3",
-      # Persistent Dataset Status Indicator (Section 5)
-      uiOutput("persistent_status_indicator"),
-      # Settings Modal Trigger
-      actionButton("btn_settings", "Settings", icon = icon("gear"), class = "btn btn-outline-light btn-sm")
+      class = "mb-3",
+      span(class = "small text-muted d-block mb-1", "Or explore immediate sample:"),
+      div(
+        class = "btn-group-vertical w-100 gap-1",
+        actionButton("btn_clean_sample", "Clean HR Dataset", icon = icon("check"), class = "btn btn-sm btn-outline-success text-start"),
+        actionButton("btn_messy_sample", "Messy Anomaly Dataset", icon = icon("triangle-exclamation"), class = "btn btn-sm btn-outline-warning text-start"),
+        actionButton("btn_sales_sample", "Realistic Sales Dataset", icon = icon("chart-line"), class = "btn btn-sm btn-outline-primary text-start")
+      )
+    ),
+
+    hr(class = "my-2"),
+
+    # Persistent Dataset Status Pill (Section 5)
+    uiOutput("sidebar_dataset_status"),
+
+    hr(class = "my-2"),
+
+    # Actions
+    h6(class = "fw-bold text-uppercase text-muted small mb-2", "Analysis Controls"),
+    actionButton("btn_reset", "Reset Analysis", icon = icon("rotate-left"), class = "btn btn-sm btn-outline-danger w-100 mb-2"),
+    actionButton("btn_settings", "Threshold Settings", icon = icon("gear"), class = "btn btn-sm btn-outline-secondary w-100 mb-2"),
+
+    # Security & Privacy badge
+    div(
+      class = "mt-4 p-2 bg-light border rounded small text-muted text-center",
+      icon("shield-check", class = "text-success me-1"),
+      "100% Client/Local Processing. No dataset leaves your browser."
     )
   ),
 
-  # Main Application Body
-  div(
-    class = "container-fluid py-3",
-    uiOutput("main_body_ui")
+  # ---- Main Content Panel ---------------------------------------------------
+  tagList(
+    tags$head(
+      tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+      tags$script(src = "app.js")
+    ),
+
+    # Top KPI Summary Cards Row (Section 4 & 19)
+    uiOutput("top_summary_cards"),
+
+    # Navigation Tabs
+    navset_card_tab(
+      id = "main_tabs",
+
+      # 1. Overview
+      nav_panel(
+        title = tagList(icon("gauge-high"), " Overview"),
+        mod_overview_ui("mod_overview")
+      ),
+
+      # 2. Data Quality
+      nav_panel(
+        title = tagList(icon("shield-halved"), " Data Quality"),
+        mod_quality_ui("mod_quality")
+      ),
+
+      # 3. Missing Values
+      nav_panel(
+        title = tagList(icon("magnifying-glass-chart"), " Missing Values"),
+        mod_missing_ui("mod_missing")
+      ),
+
+      # 4. Duplicates
+      nav_panel(
+        title = tagList(icon("copy"), " Duplicates"),
+        mod_duplicates_ui("mod_duplicates")
+      ),
+
+      # 5. Outliers
+      nav_panel(
+        title = tagList(icon("chart-simple"), " Outliers"),
+        mod_outliers_ui("mod_outliers")
+      ),
+
+      # 6. Distributions
+      nav_panel(
+        title = tagList(icon("chart-area"), " Distributions"),
+        mod_distributions_ui("mod_distributions")
+      ),
+
+      # 7. Correlations
+      nav_panel(
+        title = tagList(icon("braille"), " Correlations"),
+        mod_correlation_ui("mod_correlation")
+      ),
+
+      # 8. Relationships
+      nav_panel(
+        title = tagList(icon("circle-nodes"), " Relationships"),
+        mod_relationships_ui("mod_relationships")
+      ),
+
+      # 9. Leakage
+      nav_panel(
+        title = tagList(icon("bullseye"), " Leakage"),
+        mod_leakage_ui("mod_leakage")
+      ),
+
+      # 10. Bias
+      nav_panel(
+        title = tagList(icon("scale-unbalanced"), " Bias"),
+        mod_bias_ui("mod_bias")
+      ),
+
+      # 11. Investigation Report
+      nav_panel(
+        title = tagList(icon("file-lines"), " Investigation Report"),
+        mod_report_ui("mod_report")
+      )
+    )
   )
 )
 
 # ---- Application Server -----------------------------------------------------
 server <- function(input, output, session) {
 
-  # ---- Global Reactive State ------------------------------------------------
-  raw_dataset <- reactiveVal(NULL)
-  active_dataset <- reactiveVal(NULL)
-  dataset_metadata <- reactiveVal(NULL)
-  dataset_filename <- reactiveVal(NULL)
-  load_notification <- reactiveVal(NULL)
+  # Central Reactive Dataset
+  dataset <- reactiveVal(NULL)
+  dataset_name <- reactiveVal("Awaiting Dataset")
 
-  # Heuristic settings reactive values (Section 35)
-  settings <- reactiveValues(
-    missing_low = 5,
-    missing_moderate = 20,
-    missing_critical = 50,
-    corr_threshold = 0.70,
-    very_corr_threshold = 0.90,
-    outlier_iqr = 1.5,
-    concentration_threshold = 0.90
-  )
+  # Load sample datasets
+  load_sample <- function(path, name) {
+    if (file.exists(path)) {
+      delim <- detect_delimiter(path)
+      df <- utils::read.csv(path, sep = delim, stringsAsFactors = FALSE, check.names = FALSE)
+      # Clean headers if duplicated
+      if (any(duplicated(names(df)))) names(df) <- make.unique(names(df), sep = "_")
+      dataset(df)
+      dataset_name(name)
+    }
+  }
 
-  # ---- Sample Datasets Loader -----------------------------------------------
-  observeEvent(input$btn_load_clean, {
-    file_path <- file.path("sample_data", "sample_clean.csv")
-    if (file.exists(file_path)) {
-      res <- load_csv_data(file_path)
-      if (res$success) {
-        raw_dataset(res$raw_data)
-        active_dataset(res$data)
-        dataset_metadata(res$metadata)
-        dataset_filename("sample_clean.csv")
-        load_notification("Sample Clean Dataset loaded successfully.")
+  observeEvent(input$btn_clean_sample, {
+    load_sample("sample_data/sample_clean.csv", "sample_clean.csv")
+  })
+
+  observeEvent(input$btn_messy_sample, {
+    load_sample("sample_data/sample_messy.csv", "sample_messy.csv")
+  })
+
+  observeEvent(input$btn_sales_sample, {
+    load_sample("sample_data/sample_sales.csv", "sample_sales.csv")
+  })
+
+  # File upload handler
+  observeEvent(input$user_file, {
+    req(input$user_file)
+    f <- input$user_file
+    ext <- tolower(tools::file_ext(f$name))
+
+    tryCatch({
+      df <- if (ext == "rds") {
+        readRDS(f$datapath)
+      } else {
+        delim <- detect_delimiter(f$datapath)
+        utils::read.csv(f$datapath, sep = delim, stringsAsFactors = FALSE, check.names = FALSE)
       }
-    }
-  })
 
-  observeEvent(input$btn_load_messy, {
-    file_path <- file.path("sample_data", "sample_messy.csv")
-    if (file.exists(file_path)) {
-      res <- load_csv_data(file_path)
-      if (res$success) {
-        raw_dataset(res$raw_data)
-        active_dataset(res$data)
-        dataset_metadata(res$metadata)
-        dataset_filename("sample_messy.csv")
-        load_notification("Sample Messy Dataset (with intentional anomalies) loaded successfully.")
+      val <- validate_dataset(df)
+      if (val$valid) {
+        if (any(duplicated(names(df)))) names(df) <- make.unique(names(df), sep = "_")
+        dataset(df)
+        dataset_name(f$name)
+      } else {
+        showNotification(paste(val$errors, collapse = " | "), type = "error", duration = 6)
       }
+    }, error = function(e) {
+      showNotification(paste0("Parse failure: ", e$message), type = "error", duration = 6)
+    })
+  })
+
+  # Reset button
+  observeEvent(input$btn_reset, {
+    dataset(NULL)
+    dataset_name("Awaiting Dataset")
+    showNotification("Analysis reset. Upload a dataset or choose a sample.", type = "message", duration = 3)
+  })
+
+  # Default initial dataset: clean sample so the app is immediately alive on load!
+  observe({
+    if (is.null(dataset())) {
+      load_sample("sample_data/sample_clean.csv", "sample_clean.csv")
     }
   })
 
-  observeEvent(input$btn_load_sales, {
-    file_path <- file.path("sample_data", "sample_sales.csv")
-    if (file.exists(file_path)) {
-      res <- load_csv_data(file_path)
-      if (res$success) {
-        raw_dataset(res$raw_data)
-        active_dataset(res$data)
-        dataset_metadata(res$metadata)
-        dataset_filename("sample_sales.csv")
-        load_notification("Sample Sales Dataset loaded successfully.")
-      }
-    }
-  })
-
-  # File Upload Handler
-  observeEvent(input$file_upload, {
-    req(input$file_upload)
-    finfo <- input$file_upload
-    res <- load_csv_data(finfo$datapath)
-
-    if (res$success) {
-      raw_dataset(res$raw_data)
-      active_dataset(res$data)
-      dataset_metadata(res$metadata)
-      dataset_filename(finfo$name)
-      load_notification(paste0("Dataset '", finfo$name, "' uploaded and analyzed successfully."))
-    } else {
-      showNotification(res$error, type = "error", duration = 6)
-    }
-  })
-
-  # ---- Persistent Dataset Status Indicator (Section 5) -----------------------
-  output$persistent_status_indicator <- renderUI({
-    df <- active_dataset()
-    fname <- dataset_filename()
+  # ---- Persistent Dataset Status Indicator (Sidebar) ------------------------
+  output$sidebar_dataset_status <- renderUI({
+    df <- dataset()
+    fname <- dataset_name()
 
     if (is.null(df)) {
       div(
-        class = "dataset-status-pill",
-        div(class = "status-item", span(class = "status-label", "Dataset:"), span(class = "status-value text-warning", "None")),
-        div(class = "status-item", span(class = "status-label", "Rows:"), span(class = "status-value", "-")),
-        div(class = "status-item", span(class = "status-label", "Columns:"), span(class = "status-value", "-")),
-        div(class = "status-item", span(class = "status-label", "Status:"), span(class = "status-value text-secondary", "Awaiting Upload"))
+        class = "p-2 bg-light border rounded small",
+        div(strong("Dataset: "), span(class = "text-warning", "None")),
+        div(strong("Status: "), span(class = "text-secondary", "Awaiting Upload"))
       )
     } else {
       div(
-        class = "dataset-status-pill",
-        div(class = "status-item", span(class = "status-label", "Dataset:"), span(class = "status-value text-truncate", style = "max-width: 140px;", fname)),
-        div(class = "status-item", span(class = "status-label", "Rows:"), span(class = "status-value", format_number(nrow(df)))),
-        div(class = "status-item", span(class = "status-label", "Columns:"), span(class = "status-value", format_number(ncol(df)))),
-        div(class = "status-item", span(class = "status-label", "Status:"), span(class = "status-value text-success", "\u2713 Analyzed"))
+        class = "p-2 bg-light border rounded small",
+        div(strong("Dataset: "), span(class = "text-primary text-truncate d-inline-block", style = "max-width: 170px;", fname)),
+        div(strong("Rows: "), format_number(nrow(df))),
+        div(strong("Columns: "), format_number(ncol(df))),
+        div(strong("Status: "), span(class = "text-success fw-bold", "\u2713 Analyzed"))
       )
     }
   })
 
-  # ---- Settings Modal (Section 35) ------------------------------------------
+  # ---- Analytical Reactive Engines ------------------------------------------
+  profile_res <- reactive({
+    req(dataset())
+    inspect_dataset(dataset())
+  })
+
+  missing_res <- reactive({
+    req(dataset())
+    detect_missing(dataset())
+  })
+
+  duplicate_res <- reactive({
+    req(dataset())
+    detect_duplicates(dataset())
+  })
+
+  constant_df <- reactive({
+    req(dataset())
+    detect_constant_columns(dataset())
+  })
+
+  outlier_res <- reactive({
+    req(dataset())
+    detect_outliers(dataset())
+  })
+
+  corr_res <- reactive({
+    req(dataset())
+    calculate_correlations(dataset())
+  })
+
+  leakage_res <- reactive({
+    req(dataset())
+    detect_leakage_indicators(dataset())
+  })
+
+  bias_res <- reactive({
+    req(dataset())
+    detect_bias_indicators(dataset())
+  })
+
+  quality_res <- reactive({
+    req(profile_res(), missing_res(), duplicate_res(), outlier_res())
+    calculate_quality_indicator(profile_res(), missing_res(), duplicate_res(), outlier_res(), constant_df())
+  })
+
+  findings_res <- reactive({
+    req(profile_res(), missing_res(), duplicate_res(), outlier_res(), corr_res())
+    generate_findings(
+      profile = profile_res(),
+      missing_res = missing_res(),
+      dup_res = duplicate_res(),
+      out_res = outlier_res(),
+      const_df = constant_df(),
+      corr_res = corr_res(),
+      leak_res = leakage_res(),
+      bias_res = bias_res()
+    )
+  })
+
+  # ---- Top Dashboard KPI Cards Row (Section 4 & 19) -------------------------
+  output$top_summary_cards <- renderUI({
+    req(profile_res(), missing_res(), duplicate_res(), findings_res())
+    p <- profile_res()
+    m <- missing_res()
+    d <- duplicate_res()
+    f <- findings_res()
+
+    div(
+      class = "metrics-grid mb-3",
+      div(class = "metric-card", div(class = "metric-title", "ROWS"), div(class = "metric-value", format_number(p$n_rows))),
+      div(class = "metric-card", div(class = "metric-title", "COLUMNS"), div(class = "metric-value", format_number(p$n_cols))),
+      div(class = "metric-card", div(class = "metric-title", "MISSING CELLS"), div(class = "metric-value", paste0(format_number(m$total_missing), " (", m$missing_pct, "%)"))),
+      div(class = "metric-card", div(class = "metric-title", "DUPLICATE ROWS"), div(class = "metric-value", format_number(d$duplicate_rows_count))),
+      div(class = "metric-card", div(class = "metric-title", "NUMERIC VARS"), div(class = "metric-value", p$n_numeric)),
+      div(class = "metric-card", div(class = "metric-title", "CATEGORICAL VARS"), div(class = "metric-value", p$n_categorical)),
+      div(class = "metric-card card-alert", div(class = "metric-title", "POTENTIAL ISSUES"), div(class = "metric-value", nrow(f)))
+    )
+  })
+
+  # Settings Modal
   observeEvent(input$btn_settings, {
     showModal(modalDialog(
-      title = "Investigation Heuristic Settings",
-      div(
-        p(class = "text-muted small", "Configure heuristic thresholds used by Data Detective engines. These thresholds are configurable heuristics and do not imply universal standards."),
-        hr(),
-        h6("Missingness Severity Thresholds (%):"),
-        div(class = "row",
-            div(class = "col-4", numericInput("set_miss_low", "Low / Warning (%)", value = settings$missing_low, min = 1, max = 20)),
-            div(class = "col-4", numericInput("set_miss_mod", "Moderate (%)", value = settings$missing_moderate, min = 10, max = 40)),
-            div(class = "col-4", numericInput("set_miss_crit", "Critical (%)", value = settings$missing_critical, min = 40, max = 90))
-        ),
-        hr(),
-        h6("Statistical Anomaly Thresholds:"),
-        div(class = "row",
-            div(class = "col-4", numericInput("set_corr", "Strong Correlation (|r|)", value = settings$corr_threshold, min = 0.5, max = 0.95, step = 0.05)),
-            div(class = "col-4", numericInput("set_iqr", "Outlier IQR Multiplier", value = settings$outlier_iqr, min = 1.0, max = 3.0, step = 0.25)),
-            div(class = "col-4", numericInput("set_conc", "Category Concentration (%)", value = settings$concentration_threshold * 100, min = 70, max = 99))
-        )
-      ),
+      title = "Investigation Threshold Settings",
+      p(class = "small text-muted", "Configure heuristics used by Data Detective engines. These are configurable heuristics, not universal standards."),
+      sliderInput("set_missing", "Missing Values Alert Threshold (%):", min = 1, max = 50, value = 5, step = 1),
+      sliderInput("set_outlier", "Outlier IQR Multiplier:", min = 1.0, max = 3.0, value = 1.5, step = 0.25),
+      sliderInput("set_corr", "Strong Correlation Threshold (|r|):", min = 0.5, max = 0.95, value = 0.70, step = 0.05),
       easyClose = TRUE,
-      footer = tagList(
-        modalButton("Cancel"),
-        actionButton("btn_save_settings", "Apply Settings", class = "btn btn-primary")
-      )
+      footer = modalButton("Done")
     ))
   })
 
-  observeEvent(input$btn_save_settings, {
-    settings$missing_low <- input$set_miss_low
-    settings$missing_moderate <- input$set_miss_mod
-    settings$missing_critical <- input$set_miss_crit
-    settings$corr_threshold <- input$set_corr
-    settings$outlier_iqr <- input$set_iqr
-    settings$concentration_threshold <- input$set_conc / 100
-    removeModal()
-    showNotification("Investigation settings updated successfully.", type = "message", duration = 3)
-  })
-
-  # ---- Central Analytical Engines (Reactive) --------------------------------
-  profile_r <- reactive({
-    req(active_dataset())
-    profile_dataset(active_dataset())
-  })
-
-  missing_r <- reactive({
-    req(active_dataset())
-    analyze_missing(
-      active_dataset(),
-      thresholds = list(
-        low = settings$missing_low,
-        moderate = settings$missing_moderate,
-        critical = settings$missing_critical
-      )
-    )
-  })
-
-  duplicate_r <- reactive({
-    req(active_dataset())
-    analyze_duplicates(active_dataset())
-  })
-
-  constant_r <- reactive({
-    req(active_dataset())
-    analyze_constants(active_dataset(), concentration_threshold = settings$concentration_threshold)
-  })
-
-  outlier_r <- reactive({
-    req(active_dataset())
-    analyze_outliers(active_dataset(), iqr_multiplier = settings$outlier_iqr)
-  })
-
-  cat_r <- reactive({
-    req(active_dataset())
-    analyze_categorical(active_dataset(), concentration_threshold = settings$concentration_threshold)
-  })
-
-  corr_r <- reactive({
-    req(active_dataset())
-    analyze_correlations(
-      active_dataset(),
-      strong_thresh = settings$corr_threshold,
-      very_strong_thresh = settings$very_corr_threshold
-    )
-  })
-
-  quality_r <- reactive({
-    req(profile_r(), duplicate_r(), outlier_r(), constant_r())
-    calculate_quality_score(
-      profile = profile_r(),
-      duplicate_info = duplicate_r(),
-      outlier_info = outlier_r(),
-      constant_info = constant_r()
-    )
-  })
-
-  findings_r <- reactive({
-    req(profile_r(), missing_r(), duplicate_r(), constant_r(), outlier_r(), corr_r())
-    generate_findings(
-      profile = profile_r(),
-      missing_info = missing_r(),
-      duplicate_info = duplicate_r(),
-      constant_info = constant_r(),
-      outlier_info = outlier_r(),
-      correlation_info = corr_r(),
-      leakage_info = NULL,
-      representation_info = NULL
-    )
-  })
-
-  # ---- Main Body UI: Welcome Screen vs Investigation Workspace --------------
-  output$main_body_ui <- renderUI({
-    df <- active_dataset()
-
-    if (is.null(df)) {
-      # Section 6: Landing / Upload Experience Welcome Screen
-      div(
-        class = "welcome-hero",
-        div(class = "hero-icon", icon("magnifying-glass-chart")),
-        h2(class = "hero-title", "DATA DETECTIVE"),
-        p(class = "hero-tagline", "Upload. Investigate. Understand."),
-        p(class = "text-muted", "Upload any CSV dataset to systematically audit its data quality, statistical distributions, anomalies, correlations, and potential investigation areas."),
-
-        # Upload Control Box
-        div(
-          class = "upload-card-box",
-          fileInput(
-            "file_upload",
-            label = tags$strong("Choose CSV Dataset:"),
-            accept = c(".csv", "text/csv", "text/plain"),
-            width = "100%",
-            placeholder = "Select .csv file to inspect..."
-          )
-        ),
-
-        div(
-          class = "mt-4 pt-3 border-top",
-          p(class = "small text-muted mb-2", "Or explore immediately with pre-loaded synthetic datasets:"),
-          div(
-            class = "d-flex justify-content-center gap-2 flex-wrap",
-            actionButton("btn_load_clean", "Clean HR Dataset", icon = icon("shield-check"), class = "btn btn-outline-success btn-sm"),
-            actionButton("btn_load_messy", "Messy Anomaly Dataset", icon = icon("triangle-exclamation"), class = "btn btn-outline-warning btn-sm"),
-            actionButton("btn_load_sales", "Realistic Sales Dataset", icon = icon("chart-line"), class = "btn btn-outline-primary btn-sm")
-          )
-        )
-      )
-    } else {
-      # Analyzed Dataset Active Workspace
-      tagList(
-        # Upload Success Notification Banner (Section 6)
-        div(
-          class = "alert alert-success alert-dismissible fade show d-flex align-items-center justify-content-between mb-3",
-          role = "alert",
-          div(
-            icon("circle-check", class = "me-2"),
-            strong(dataset_filename()), " \u2014 ",
-            paste0("\u2713 Loaded ", format_number(nrow(df)), " rows | "),
-            paste0("\u2713 ", format_number(ncol(df)), " columns | "),
-            paste0("\u2713 ", profile_r()$n_numeric, " numeric variables | "),
-            paste0("\u2713 ", profile_r()$n_categorical, " categorical variables")
-          ),
-          div(
-            fileInput("file_upload_change", label = NULL, buttonLabel = "Upload Another CSV", accept = c(".csv"), width = "160px"),
-            style = "margin-bottom: -15px;"
-          )
-        ),
-
-        # Section 5 Navigation Tabs
-        navlistPanel(
-          id = "nav_tabs",
-          widths = c(2, 10),
-          well = TRUE,
-
-          tabPanel(
-            title = tagList(icon("gauge-high"), " Dashboard"),
-            value = "tab_dashboard",
-            mod_overview_ui("overview_mod")
-          ),
-          tabPanel(
-            title = tagList(icon("shield-halved"), " Data Quality"),
-            value = "tab_quality",
-            mod_quality_ui("quality_mod")
-          ),
-          tabPanel(
-            title = tagList(icon("chart-simple"), " Outliers"),
-            value = "tab_outliers",
-            mod_outliers_ui("outliers_mod")
-          ),
-          tabPanel(
-            title = tagList(icon("chart-area"), " Distributions"),
-            value = "tab_distributions",
-            mod_distributions_ui("distributions_mod")
-          ),
-          tabPanel(
-            title = tagList(icon("tags"), " Categorical"),
-            value = "tab_categorical",
-            mod_categorical_ui("categorical_mod")
-          ),
-          tabPanel(
-            title = tagList(icon("braille"), " Correlations"),
-            value = "tab_correlations",
-            mod_correlations_ui("correlations_mod")
-          ),
-          tabPanel(
-            title = tagList(icon("network-wired"), " Pattern Detection"),
-            value = "tab_patterns",
-            mod_patterns_ui("patterns_mod")
-          ),
-          tabPanel(
-            title = tagList(icon("magnifying-glass-arrow-right"), " Investigation Center"),
-            value = "tab_findings",
-            mod_findings_ui("findings_mod")
-          ),
-          tabPanel(
-            title = tagList(icon("file-arrow-down"), " Report"),
-            value = "tab_report",
-            mod_report_ui("report_mod")
-          )
-        )
-      )
-    }
-  })
-
-  # Handle secondary upload button
-  observeEvent(input$file_upload_change, {
-    req(input$file_upload_change)
-    finfo <- input$file_upload_change
-    res <- load_csv_data(finfo$datapath)
-    if (res$success) {
-      raw_dataset(res$raw_data)
-      active_dataset(res$data)
-      dataset_metadata(res$metadata)
-      dataset_filename(finfo$name)
-    }
-  })
-
-  # ---- Initialize Modules ---------------------------------------------------
-  mod_overview_server(
-    id = "overview_mod",
-    data_r = active_dataset,
-    profile_r = profile_r,
-    quality_r = quality_r,
-    findings_r = findings_r,
-    duplicate_r = duplicate_r,
-    outlier_r = outlier_r,
-    missing_r = missing_r
-  )
-
-  mod_quality_server(
-    id = "quality_mod",
-    data_r = active_dataset,
-    missing_r = missing_r,
-    duplicate_r = duplicate_r,
-    constant_r = constant_r,
-    quality_r = quality_r
-  )
-
-  mod_outliers_server(
-    id = "outliers_mod",
-    data_r = active_dataset,
-    outlier_r = outlier_r
-  )
-
-  mod_distributions_server(
-    id = "distributions_mod",
-    data_r = active_dataset,
-    profile_r = profile_r
-  )
-
-  mod_categorical_server(
-    id = "categorical_mod",
-    data_r = active_dataset,
-    cat_r = cat_r
-  )
-
-  mod_correlations_server(
-    id = "correlations_mod",
-    data_r = active_dataset,
-    corr_r = corr_r
-  )
-
-  mod_patterns_server(
-    id = "patterns_mod",
-    data_r = active_dataset,
-    profile_r = profile_r
-  )
-
-  mod_findings_server(
-    id = "findings_mod",
-    findings_r = findings_r
-  )
-
-  mod_report_server(
-    id = "report_mod",
-    data_r = active_dataset,
-    profile_r = profile_r,
-    quality_r = quality_r,
-    missing_r = missing_r,
-    duplicate_r = duplicate_r,
-    outlier_r = outlier_r,
-    constant_r = constant_r,
-    corr_r = corr_r,
-    findings_r = findings_r,
-    file_name_r = dataset_filename
-  )
+  # ---- Submodule Servers ----------------------------------------------------
+  mod_overview_server("mod_overview", data_r = dataset, profile_r = profile_res, issues_count_r = reactive(nrow(findings_res())))
+  mod_quality_server("mod_quality", quality_r = quality_res, findings_r = findings_res)
+  mod_missing_server("mod_missing", missing_r = missing_res)
+  mod_duplicates_server("mod_duplicates", duplicate_r = duplicate_res)
+  mod_outliers_server("mod_outliers", data_r = dataset, outlier_r = outlier_res)
+  mod_distributions_server("mod_distributions", data_r = dataset)
+  mod_correlation_server("mod_correlation", data_r = dataset)
+  mod_relationships_server("mod_relationships", data_r = dataset)
+  mod_leakage_server("mod_leakage", data_r = dataset)
+  mod_bias_server("mod_bias", data_r = dataset)
+  mod_report_server("mod_report", profile_r = profile_res, quality_r = quality_res, findings_r = findings_res, filename_r = dataset_name)
 }
 
-# ---- Launch Application -----------------------------------------------------
+# Run Application
 shinyApp(ui = ui, server = server)
