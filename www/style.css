@@ -1,0 +1,289 @@
+/* ==========================================================================
+   DATA DETECTIVE: Premium Modern Dashboard Stylesheet
+   ========================================================================== */
+
+:root {
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --secondary-color: #64748b;
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --text-dark: #0f172a;
+  --text-muted: #64748b;
+  --accent-high: #ef4444;
+  --accent-warn: #f59e0b;
+  --accent-info: #3b82f6;
+  --accent-good: #10b981;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+}
+
+/* Header Styles */
+.app-header {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #ffffff;
+  padding: 16px 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.brand-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+}
+
+.brand-subtitle {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 2px 0 0 0;
+  max-width: 650px;
+}
+
+/* Status Banner Pill */
+.dataset-status-pill {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 6px 14px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.status-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-label {
+  color: #94a3b8;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.status-value {
+  color: #f8fafc;
+  font-weight: 700;
+}
+
+/* Metrics Grid Cards */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.metric-card {
+  background: #ffffff;
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.metric-card.card-alert {
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
+
+.metric-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1.1;
+}
+
+.card-alert .metric-value {
+  color: #dc2626;
+}
+
+/* Panels */
+.panel-box {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+  margin-bottom: 16px;
+}
+
+.panel-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 14px;
+}
+
+/* Quality Indicator Score */
+.quality-score-circle {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 7px solid #3b82f6;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.score-val {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.score-max {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.quality-status-pill {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 4px 16px;
+  border-radius: 20px;
+}
+
+.quality-score-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* Executive Summary Text */
+.exec-summary-text {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: #334155;
+  background: #f8fafc;
+  border-left: 4px solid var(--primary-color);
+  padding: 14px 18px;
+  border-radius: 0 8px 8px 0;
+}
+
+/* Finding Cards */
+.finding-card-item {
+  background: #ffffff;
+  transition: all 0.15s ease;
+}
+
+.finding-card-item:hover {
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+
+.border-danger-left {
+  border-left: 5px solid var(--accent-high) !important;
+}
+
+.border-warning-left {
+  border-left: 5px solid var(--accent-warn) !important;
+}
+
+.border-info-left {
+  border-left: 5px solid var(--accent-info) !important;
+}
+
+/* Compact Metrics Grid in Distributions */
+.metrics-compact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.compact-cell {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+}
+
+/* Landing / Welcome Screen */
+.welcome-hero {
+  max-width: 850px;
+  margin: 40px auto;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 50px 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.hero-icon {
+  font-size: 3.5rem;
+  color: var(--primary-color);
+  margin-bottom: 16px;
+}
+
+.hero-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.hero-tagline {
+  font-size: 1.15rem;
+  color: #64748b;
+  margin-bottom: 24px;
+}
+
+.upload-card-box {
+  background: #f8fafc;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 30px;
+  margin: 20px auto;
+  max-width: 500px;
+}
+
+/* DataTables Styling */
+table.dataTable thead th {
+  background-color: #f1f5f9;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+table.dataTable tbody td {
+  font-size: 0.85rem;
+}

@@ -1,0 +1,24 @@
+Package: DataDetective
+Title: Automated Dataset Investigation Platform
+Version: 1.0.0
+Authors@R: person("Vijay", "Mahes", email = "Vijaypradhap2004@gmail.com", role = c("aut", "cre"))
+Description: An automated statistical data-quality, exploratory analysis, and anomaly investigation platform built with R and Shiny. Provides systematic data profiling, transparent heuristic quality scoring, IQR outlier diagnostics, correlation and multicollinearity detection, and report generation.
+License: MIT
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends:
+    R (>= 4.0.0)
+Imports:
+    shiny (>= 1.7.0),
+    bslib (>= 0.5.0),
+    DT (>= 0.28),
+    ggplot2 (>= 3.4.0),
+    readr (>= 2.1.0),
+    stats,
+    utils,
+    tools
+Suggests:
+    testthat (>= 3.0.0),
+    rmarkdown (>= 2.20),
+    knitr (>= 1.40)

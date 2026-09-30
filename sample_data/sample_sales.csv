@@ -1,0 +1,27 @@
+Date,Product,Region,Quantity,Price,Revenue,Customer Segment
+2023-01-05,Laptop Pro,North,5,1200,6000,Enterprise
+2023-01-08,Wireless Mouse,South,25,25,625,Consumer
+2023-01-12,HD Monitor,East,8,300,2400,Small Business
+2023-01-15,USB-C Hub,West,15,45,675,Consumer
+2023-01-20,Ergonomic Chair,North,4,350,1400,Enterprise
+2023-01-25,Laptop Pro,West,3,1200,3600,Small Business
+2023-02-02,Mechanical Keyboard,East,12,85,1020,Consumer
+2023-02-06,HD Monitor,South,6,300,1800,Enterprise
+2023-02-10,Webcam 4K,North,10,110,1100,Consumer
+2023-02-14,Laptop Pro,East,7,1200,8400,Enterprise
+2023-02-18,Wireless Mouse,West,30,25,750,Small Business
+2023-02-22,Ergonomic Chair,South,2,350,700,Consumer
+2023-03-01,Standing Desk,North,3,550,1650,Enterprise
+2023-03-05,Laptop Pro,South,4,1200,4800,Small Business
+2023-03-10,USB-C Hub,East,20,45,900,Consumer
+2023-03-15,Mechanical Keyboard,West,14,85,1190,Small Business
+2023-03-20,HD Monitor,North,11,300,3300,Enterprise
+2023-03-25,Webcam 4K,South,8,110,880,Consumer
+2023-03-29,Standing Desk,West,5,550,2750,Enterprise
+2023-04-03,Laptop Pro,North,6,1200,7200,Enterprise
+2023-04-07,Wireless Mouse,East,22,25,550,Consumer
+2023-04-12,Ergonomic Chair,West,6,350,2100,Small Business
+2023-04-16,USB-C Hub,North,18,45,810,Consumer
+2023-04-20,Mechanical Keyboard,South,9,85,765,Consumer
+2023-04-25,HD Monitor,West,5,300,1500,Small Business
+2023-04-30,Standing Desk,East,2,550,1100,Consumer

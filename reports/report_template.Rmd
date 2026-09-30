@@ -1,0 +1,155 @@
+---
+title: "Data Detective: Dataset Investigation Report"
+subtitle: "Automated Statistical Data Quality & Exploratory Analysis"
+date: "`r format(Sys.time(), '%Y-%m-%d %H:%M:%S %Z')`"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 3
+params:
+  file_name: "dataset.csv"
+  profile: NULL
+  quality_info: NULL
+  missing_info: NULL
+  duplicate_info: NULL
+  outlier_info: NULL
+  constant_info: NULL
+  correlation_info: NULL
+  leakage_info: NULL
+  representation_info: NULL
+  findings_result: NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+## Dataset Overview
+
+- **Source File:** `r params$file_name`
+- **Total Rows:** `r if (!is.null(params$profile)) format(params$profile$n_rows, big.mark = ",") else "0"`
+- **Total Columns:** `r if (!is.null(params$profile)) format(params$profile$n_cols, big.mark = ",") else "0"`
+- **Memory Footprint:** `r if (!is.null(params$profile)) params$profile$memory_formatted else "0 B"`
+
+---
+
+## 1. Executive Summary
+
+`r if (!is.null(params$findings_result)) params$findings_result$executive_summary else "No executive summary available."`
+
+---
+
+## 2. Data Quality Indicator
+
+```{r quality_summary}
+if (!is.null(params$quality_info)) {
+  cat(paste0("**Data Quality Score:** ", params$quality_info$score, " / 100\n\n"))
+  cat(paste0("**Status:** ", params$quality_info$status, "\n\n"))
+  cat(paste0("*", params$quality_info$explanation, "*\n\n"))
+}
+```
+
+---
+
+## 3. Dataset Profile & Summary Statistics
+
+```{r profile_table}
+if (!is.null(params$profile) && nrow(params$profile$columns_summary) > 0) {
+  knitr::kable(params$profile$columns_summary[, c("column", "data_type", "missing_count", "missing_pct", "unique_count", "min", "max", "mean")],
+               caption = "Dataset Variable Profile")
+}
+```
+
+---
+
+## 4. Missing Value Diagnostics
+
+```{r missing_summary}
+if (!is.null(params$missing_info) && nrow(params$missing_info$column_summary) > 0) {
+  m_sub <- params$missing_info$column_summary[params$missing_info$column_summary$missing_count > 0, ]
+  if (nrow(m_sub) > 0) {
+    knitr::kable(m_sub, caption = "Columns with Missing Values")
+  } else {
+    cat("No missing values were detected in any column.\n")
+  }
+}
+```
+
+---
+
+## 5. Duplicate Records Assessment
+
+```{r duplicate_summary}
+if (!is.null(params$duplicate_info)) {
+  cat(paste0("- **Total Exact Duplicate Rows:** ", params$duplicate_info$duplicate_rows_count, " (", params$duplicate_info$duplicate_pct, "%)\n"))
+  cat(paste0("- **Unique Records:** ", params$duplicate_info$unique_rows_count, "\n"))
+  cat(paste0("- **Status:** ", params$duplicate_info$status, "\n"))
+}
+```
+
+---
+
+## 6. Outlier Investigation (IQR Method)
+
+```{r outlier_summary}
+if (!is.null(params$outlier_info) && nrow(params$outlier_info$summary) > 0) {
+  knitr::kable(params$outlier_info$summary[, c("column", "q1", "q3", "iqr", "lower_bound", "upper_bound", "outlier_count", "outlier_pct")],
+               caption = "Outlier Observations (IQR 1.5 Multiplier)")
+}
+```
+
+---
+
+## 7. Correlation & Multicollinearity
+
+```{r correlation_summary}
+if (!is.null(params$correlation_info) && nrow(params$correlation_info$multicollinear_pairs) > 0) {
+  knitr::kable(params$correlation_info$multicollinear_pairs[, c("variable_a", "variable_b", "pearson_r", "strength", "investigation_note")],
+               caption = "Highly Correlated Feature Pairs (|r| >= 0.70)")
+} else {
+  cat("No severe multicollinear pairs (|r| >= 0.70) detected.\n")
+}
+```
+
+---
+
+## 8. Potential Data Leakage & Representation Indicators
+
+```{r leakage_rep}
+if (!is.null(params$leakage_info) && params$leakage_info$target_specified && nrow(params$leakage_info$indicators) > 0) {
+  knitr::kable(params$leakage_info$indicators, caption = "Potential Data Leakage Indicators")
+}
+
+if (!is.null(params$representation_info) && nrow(params$representation_info$indicators) > 0) {
+  knitr::kable(params$representation_info$indicators, caption = "Potential Representation Disparities")
+}
+```
+
+---
+
+## 9. Comprehensive Investigation Findings
+
+```{r findings_table}
+if (!is.null(params$findings_result) && nrow(params$findings_result$findings) > 0) {
+  knitr::kable(params$findings_result$findings[, c("id", "category", "severity", "column", "description", "evidence", "recommendation")],
+               caption = "Complete Investigation Findings Dossier")
+} else {
+  cat("No investigation flags were triggered for this dataset.\n")
+}
+```
+
+---
+
+## 10. Recommended Investigation Steps
+
+1. **Review High-Severity Flags:** Prioritize reviewing columns with critical missingness and potential leakage indicators.
+2. **Examine Outlier Origins:** Distinguish measurement errors from genuine tail phenomena.
+3. **Address Redundancy:** Review multicollinear features prior to linear statistical estimation.
+4. **Inspect Group Disparities:** Check representation balance across demographic or transactional cohorts.
+
+---
+
+> **Report Disclaimer:**
+> This report is an automated statistical investigation. Detected patterns are indicators for further investigation and should not automatically be interpreted as data errors, causal relationships, confirmed leakage, or confirmed bias.

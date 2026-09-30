@@ -1,0 +1,30 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.RDataTmp
+
+# User-specific files
+.Ruserdata
+
+# Example vignette sources and builds
+.Rbuildignore
+inst/doc
+
+# RStudio files
+.Rproj.user/
+
+# OAuth / secret files
+.httr-oauth
+.Renviron
+
+# Compiled files
+*.o
+*.so
+*.dll
+
+# OS files
+.DS_Store
+Thumbs.db
