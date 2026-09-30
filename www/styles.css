@@ -3,6 +3,8 @@
    Compatible with bslib and Shinylive WebAssembly
    ============================================================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
   --primary-color: #2563eb;
   --text-dark: #0f172a;
@@ -11,7 +13,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--text-dark);
   background-color: #f8fafc;
 }

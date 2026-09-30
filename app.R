@@ -18,6 +18,7 @@ for (f in r_files) {
 }
 
 # Theme definition using bslib
+# Theme definition using bslib (WebAssembly / Shinylive compatible, font loaded via CSS)
 theme_custom <- bslib::bs_theme(
   version = 5,
   bootswatch = "zephyr",
@@ -26,9 +27,7 @@ theme_custom <- bslib::bs_theme(
   success = "#10b981",
   warning = "#f59e0b",
   danger = "#ef4444",
-  info = "#0284c7",
-  base_font = bslib::font_google("Inter"),
-  heading_font = bslib::font_google("Inter")
+  info = "#0284c7"
 )
 
 # ---- Application UI ---------------------------------------------------------
