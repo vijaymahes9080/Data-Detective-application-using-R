@@ -1,0 +1,12 @@
+{
+    "name": "vijaymahes/data-detective-application-using-r",
+    "description": "Data Detective application using R",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Vijay Mahes",
+            "email": "Vijaypradhap2004@gmail.com"
+        }
+    ],
+    "require": {}
+}
