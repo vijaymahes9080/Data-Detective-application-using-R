@@ -182,9 +182,19 @@ server <- function(input, output, session) {
   load_sample <- function(path, name) {
     if (file.exists(path)) {
       delim <- detect_delimiter(path)
-      df <- utils::read.csv(path, sep = delim, stringsAsFactors = FALSE, check.names = FALSE)
-      # Clean headers if duplicated
-      if (any(duplicated(names(df)))) names(df) <- make.unique(names(df), sep = "_")
+      df <- utils::read.csv(
+        path,
+        sep = delim,
+        stringsAsFactors = FALSE,
+        check.names = FALSE,
+        na.strings = c("", "NA", "N/A", "null", "NULL", "NaN")
+      )
+      # Clean and repair headers
+      cn <- names(df)
+      empty_idx <- which(is.na(cn) | trimws(cn) == "")
+      if (length(empty_idx) > 0) cn[empty_idx] <- paste0("V_", empty_idx)
+      if (any(duplicated(cn))) cn <- make.unique(cn, sep = "_")
+      names(df) <- cn
       dataset(df)
       dataset_name(name)
     }
@@ -213,12 +223,22 @@ server <- function(input, output, session) {
         readRDS(f$datapath)
       } else {
         delim <- detect_delimiter(f$datapath)
-        utils::read.csv(f$datapath, sep = delim, stringsAsFactors = FALSE, check.names = FALSE)
+        utils::read.csv(
+          f$datapath,
+          sep = delim,
+          stringsAsFactors = FALSE,
+          check.names = FALSE,
+          na.strings = c("", "NA", "N/A", "null", "NULL", "NaN")
+        )
       }
 
       val <- validate_dataset(df)
       if (val$valid) {
-        if (any(duplicated(names(df)))) names(df) <- make.unique(names(df), sep = "_")
+        cn <- names(df)
+        empty_idx <- which(is.na(cn) | trimws(cn) == "")
+        if (length(empty_idx) > 0) cn[empty_idx] <- paste0("V_", empty_idx)
+        if (any(duplicated(cn))) cn <- make.unique(cn, sep = "_")
+        names(df) <- cn
         dataset(df)
         dataset_name(f$name)
       } else {

@@ -40,8 +40,10 @@ inspect_dataset <- function(df) {
 
     if (is.character(cdata)) {
       n_miss <- sum(is.na(cdata) | trimws(cdata) == "")
-    } else {
+    } else if (is.numeric(cdata)) {
       n_miss <- sum(is.na(cdata) | is.nan(cdata))
+    } else {
+      n_miss <- sum(is.na(cdata))
     }
     miss_pct <- ifelse(n_rows > 0, (n_miss / n_rows) * 100, 0)
 
@@ -139,8 +141,10 @@ detect_missing <- function(df, thresholds = list(low = 5, moderate = 20, high = 
     cdata <- df[[col]]
     if (is.character(cdata)) {
       n_miss <- sum(is.na(cdata) | trimws(cdata) == "")
-    } else {
+    } else if (is.numeric(cdata)) {
       n_miss <- sum(is.na(cdata) | is.nan(cdata))
+    } else {
+      n_miss <- sum(is.na(cdata))
     }
     pct <- (n_miss / n_rows) * 100
 
@@ -396,7 +400,7 @@ calculate_correlations <- function(df, method = "pearson", strong_thresh = 0.70)
     rownames(pairs_df) <- NULL
   }
 
-  multi_df <- pairs_df[pairs_df$abs_r >= strong_thresh, , drop = FALSE]
+  multi_df <- if (nrow(pairs_df) > 0) pairs_df[pairs_df$abs_r >= strong_thresh, , drop = FALSE] else data.frame()
 
   return(list(
     has_correlations = TRUE,
@@ -809,3 +813,10 @@ generate_findings <- function(profile, missing_res, dup_res, out_res, const_df, 
 
   return(f_df)
 }
+
+# ---- Backward Compatibility Aliases -----------------------------------------
+profile_dataset <- inspect_dataset
+analyze_missing <- detect_missing
+analyze_duplicates <- detect_duplicates
+analyze_constants <- detect_constant_columns
+

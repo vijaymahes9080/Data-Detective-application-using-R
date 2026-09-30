@@ -5,7 +5,7 @@
 
 library(testthat)
 
-source("../R/helper_functions.R")
+source("../R/utility_functions.R")
 source("../R/validation_functions.R")
 
 test_that("validate_csv_file handles non-existent or empty paths gracefully", {

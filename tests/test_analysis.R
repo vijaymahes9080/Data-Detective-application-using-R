@@ -6,7 +6,7 @@
 library(testthat)
 
 # Source required analytical engines
-source("../R/helper_functions.R")
+source("../R/utility_functions.R")
 source("../R/validation_functions.R")
 source("../R/analysis_functions.R")
 

@@ -94,6 +94,7 @@ mod_bias_server <- function(id, data_r) {
       df <- data_r()
       g_col <- input$group_var
       o_col <- input$outcome_var
+      req(g_col %in% names(df), o_col %in% names(df))
 
       g_vals <- as.character(df[[g_col]])
       o_vals <- df[[o_col]]

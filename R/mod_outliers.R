@@ -124,6 +124,7 @@ mod_outliers_server <- function(id, data_r, outlier_r) {
     # Boxplot
     output$plot_box <- renderPlot({
       req(input$num_var, data_r())
+      req(input$num_var %in% names(data_r()))
       v <- data_r()[[input$num_var]]
       clean_v <- v[!is.na(v) & is.finite(v)]
       req(length(clean_v) > 2)
@@ -140,6 +141,7 @@ mod_outliers_server <- function(id, data_r, outlier_r) {
     # Histogram
     output$plot_hist <- renderPlot({
       req(input$num_var, data_r(), outlier_r())
+      req(input$num_var %in% names(data_r()))
       v <- data_r()[[input$num_var]]
       clean_v <- v[!is.na(v) & is.finite(v)]
       req(length(clean_v) > 2)
@@ -164,6 +166,7 @@ mod_outliers_server <- function(id, data_r, outlier_r) {
     # Flagged rows
     output$table_flagged_rows <- DT::renderDataTable({
       req(input$num_var, data_r(), outlier_r())
+      req(input$num_var %in% names(data_r()))
       det <- outlier_r()$details[[input$num_var]]
       if (is.null(det) || length(det$outlier_indices) == 0) {
         return(DT::datatable(

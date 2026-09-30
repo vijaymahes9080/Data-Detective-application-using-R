@@ -69,16 +69,19 @@ mod_relationships_server <- function(id, data_r) {
     pairing_type <- reactive({
       req(input$var_x, input$var_y, data_r())
       df <- data_r()
+      req(input$var_x %in% names(df), input$var_y %in% names(df))
+
       tx <- detect_column_type(df[[input$var_x]])
       ty <- detect_column_type(df[[input$var_y]])
 
       is_num_x <- tx %in% c("numeric", "integer")
       is_num_y <- ty %in% c("numeric", "integer")
-      is_date_x <- tx %in% c("date", "datetime")
+      is_date_x <- tx %in% c("date", "datetime", "date_candidate")
+      is_date_y <- ty %in% c("date", "datetime", "date_candidate")
       is_cat_x <- tx %in% c("character", "factor", "logical")
       is_cat_y <- ty %in% c("character", "factor", "logical")
 
-      if (is_date_x && is_num_y) {
+      if ((is_date_x && is_num_y) || (is_num_x && is_date_y)) {
         "date_num"
       } else if (is_num_x && is_num_y) {
         "num_num"
@@ -109,6 +112,7 @@ mod_relationships_server <- function(id, data_r) {
     output$plot_relationship <- renderPlot({
       req(input$var_x, input$var_y, data_r())
       df <- data_r()
+      req(input$var_x %in% names(df), input$var_y %in% names(df))
       vx <- df[[input$var_x]]
       vy <- df[[input$var_y]]
       pt <- pairing_type()
@@ -185,6 +189,7 @@ mod_relationships_server <- function(id, data_r) {
     output$relationship_stats <- renderUI({
       req(input$var_x, input$var_y, data_r())
       df <- data_r()
+      req(input$var_x %in% names(df), input$var_y %in% names(df))
       vx <- df[[input$var_x]]
       vy <- df[[input$var_y]]
       pt <- pairing_type()
@@ -214,6 +219,7 @@ mod_relationships_server <- function(id, data_r) {
     output$table_relationship_data <- DT::renderDataTable({
       req(input$var_x, input$var_y, data_r())
       df <- data_r()
+      req(input$var_x %in% names(df), input$var_y %in% names(df))
       vx <- df[[input$var_x]]
       vy <- df[[input$var_y]]
       pt <- pairing_type()

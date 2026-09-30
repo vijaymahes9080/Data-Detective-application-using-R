@@ -84,6 +84,7 @@ mod_distributions_server <- function(id, data_r) {
     # Numeric Skewness Alert
     output$skew_alert <- renderUI({
       req(input$select_num, data_r())
+      req(input$select_num %in% names(data_r()))
       v <- data_r()[[input$select_num]]
       clean_v <- v[!is.na(v) & is.finite(v)]
       req(length(clean_v) > 2)
@@ -110,6 +111,7 @@ mod_distributions_server <- function(id, data_r) {
     # Numeric Histogram
     output$plot_num_hist <- renderPlot({
       req(input$select_num, data_r())
+      req(input$select_num %in% names(data_r()))
       v <- data_r()[[input$select_num]]
       clean_v <- v[!is.na(v) & is.finite(v)]
       req(length(clean_v) > 2)
@@ -127,6 +129,7 @@ mod_distributions_server <- function(id, data_r) {
     # Numeric Stats Grid
     output$num_stats_grid <- renderUI({
       req(input$select_num, data_r())
+      req(input$select_num %in% names(data_r()))
       v <- data_r()[[input$select_num]]
       clean_v <- v[!is.na(v) & is.finite(v)]
       req(length(clean_v) > 0)
@@ -149,6 +152,7 @@ mod_distributions_server <- function(id, data_r) {
     # Categorical Concentration Alert
     output$cat_alert <- renderUI({
       req(input$select_cat, data_r())
+      req(input$select_cat %in% names(data_r()))
       v <- data_r()[[input$select_cat]]
       non_na <- v[!is.na(v) & trimws(as.character(v)) != ""]
       req(length(non_na) > 0)
@@ -175,6 +179,7 @@ mod_distributions_server <- function(id, data_r) {
     # Categorical Bar Plot
     output$plot_cat_bar <- renderPlot({
       req(input$select_cat, data_r())
+      req(input$select_cat %in% names(data_r()))
       v <- data_r()[[input$select_cat]]
       non_na <- v[!is.na(v) & trimws(as.character(v)) != ""]
       req(length(non_na) > 0)
@@ -195,6 +200,7 @@ mod_distributions_server <- function(id, data_r) {
     # Categorical Table
     output$table_cat_freq <- DT::renderDataTable({
       req(input$select_cat, data_r())
+      req(input$select_cat %in% names(data_r()))
       v <- data_r()[[input$select_cat]]
       non_na <- v[!is.na(v) & trimws(as.character(v)) != ""]
       req(length(non_na) > 0)

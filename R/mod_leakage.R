@@ -54,7 +54,7 @@ mod_leakage_server <- function(id, data_r) {
     leakage_obj <- reactive({
       req(data_r())
       t_sel <- input$target_var
-      if (is.null(t_sel) || t_sel == "") return(list(target_specified = FALSE, indicators = data.frame()))
+      if (is.null(t_sel) || t_sel == "" || !(t_sel %in% names(data_r()))) return(list(target_specified = FALSE, indicators = data.frame()))
       detect_leakage_indicators(data_r(), target_col = t_sel)
     })
 
