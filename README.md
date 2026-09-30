@@ -61,6 +61,7 @@ REPORT GENERATION  ◄──  FINDING ENGINE  ◄──  STATISTICAL & PATTERN E
 Data-Detective/
 ├── app.R                          # Main Shiny Application (UI & Server orchestration)
 ├── DESCRIPTION                    # R Package & Dependency metadata
+├── LICENSE                        # MIT License
 ├── README.md                      # Comprehensive project documentation
 ├── .gitignore                     # R and OS exclusions
 │
@@ -213,4 +214,4 @@ The codebase is built with modular abstraction layers to facilitate future exten
 
 - **Author:** Vijay Mahes
 - **Email:** [Vijaypradhap2004@gmail.com](mailto:Vijaypradhap2004@gmail.com)
-- **License:** MIT License
+- **License:** [MIT License](LICENSE)

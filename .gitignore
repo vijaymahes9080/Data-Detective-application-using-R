@@ -1,30 +1,34 @@
-# History files
+# R session & history files
 .Rhistory
 .Rapp.history
-
-# Session Data files
 .RData
 .RDataTmp
-
-# User-specific files
 .Ruserdata
 
 # Example vignette sources and builds
 .Rbuildignore
 inst/doc
 
-# RStudio files
+# RStudio & IDE project configurations
 .Rproj.user/
+*.Rproj
+.vscode/
+.idea/
 
-# OAuth / secret files
+# Shiny deployment & secret tokens
+rsconnect/
 .httr-oauth
 .Renviron
+*.secret
 
-# Compiled files
+# Compiled binary & dynamic libraries
 *.o
 *.so
 *.dll
 
-# OS files
+# OS metadata & temporary files
 .DS_Store
 Thumbs.db
+desktop.ini
+*.tmp
+*.log
