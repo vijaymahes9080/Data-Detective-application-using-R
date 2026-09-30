@@ -31,7 +31,7 @@ jobs:
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: "4.3.2"
+          r-version: "release"
           use-public-rspm: true
 
       - name: Setup system dependencies
@@ -39,18 +39,54 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev libssl-dev libxml2-dev
 
-      - name: Install R Dependencies for Shinylive Export
+      - name: Install R Dependencies & Shinylive
         run: |
-          install.packages(c("shinylive", "shiny", "bslib", "DT", "ggplot2"), repos = "https://cloud.r-project.org")
+          # Set up repositories: Posit dev universe (for shinylive) + RSPM/CRAN
+          options(repos = c(
+            posit = "https://posit-dev.r-universe.dev",
+            getOption("repos"),
+            cran = "https://cloud.r-project.org"
+          ))
+
+          # Install pak for fast, robust dependency resolution
+          if (!requireNamespace("pak", quietly = TRUE)) {
+            install.packages("pak", repos = "https://cloud.r-project.org")
+          }
+
+          # Install shinylive and core application packages
+          pak::pak(c(
+            "posit-dev/r-shinylive",
+            "shiny",
+            "bslib",
+            "DT",
+            "ggplot2",
+            "readr"
+          ))
+
+          # Verify shinylive package installation
+          if (!requireNamespace("shinylive", quietly = TRUE)) {
+            stop("FATAL: shinylive package failed to install!")
+          }
+          cat("SUCCESS: Shinylive package version", as.character(packageVersion("shinylive")), "verified!\n")
         shell: Rscript {0}
 
       - name: Export Shiny App to Static Shinylive Site
         run: |
-          shinylive::export(".", "site")
+          # Export to static Shinylive site
+          shinylive::export(".", "site", quiet = FALSE)
+
+          # Disable Jekyll on GitHub Pages to serve all WebAssembly and underscore assets
+          file.create(file.path("site", ".nojekyll"))
+
+          # Verify that index.html and app assets exist
+          if (!file.exists(file.path("site", "index.html"))) {
+            stop("FATAL: Export failed - site/index.html was not generated!")
+          }
+          cat("SUCCESS: Static site export verified. Ready for GitHub Pages deployment.\n")
         shell: Rscript {0}
 
       - name: Setup Pages
-        uses: actions/configure-pages@v4
+        uses: actions/configure-pages@v5
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v3
@@ -60,3 +96,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
