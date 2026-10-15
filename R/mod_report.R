@@ -52,49 +52,62 @@ mod_report_server <- function(id, profile_r, quality_r, findings_r, filename_r) 
       tagList(
         div(
           class = "p-4 bg-white border rounded shadow-sm",
-          div(class = "border-bottom pb-2 mb-3",
-              h3("DATASET INVESTIGATION DOSSIER"),
-              p(class = "text-muted mb-0", "Automated statistical data quality & exploratory audit report")),
           div(
-            class = "alert alert-light border small mb-3",
-            div(class = "row",
-                div(class = "col-md-3", strong("Dataset: "), fname),
-                div(class = "col-md-3", strong("Rows: "), format_number(p$n_rows)),
-                div(class = "col-md-3", strong("Columns: "), format_number(p$n_cols)),
-                div(class = "col-md-3", strong("Quality Indicator: "), span(style = paste0("color: ", q$status_color, "; font-weight: bold;"), paste0(q$score, "/100 (", q$status, ")")))
+            class = "d-flex justify-content-between align-items-center border-bottom pb-3 mb-3 flex-wrap gap-2",
+            div(
+              h4(class = "fw-bold text-dark mb-1", icon("file-lines", class = "text-primary me-2"), "DATASET INVESTIGATION DOSSIER"),
+              p(class = "text-muted small mb-0", "Automated statistical data quality, anomaly audit & exploratory dossier")
+            ),
+            div(
+              span(class = "badge bg-light text-dark border px-3 py-2", paste0("Generated: ", format(Sys.Date(), "%B %d, %Y")))
             )
           ),
-          h5("1. Key Investigation Findings"),
-          p(paste0("Total issues detected: ", nrow(f), " (High Severity: ", n_high, " | Medium Severity: ", n_med, " | Low Severity: ", n_low, ")")),
+          div(
+            class = "p-3 bg-light border rounded mb-4",
+            div(
+              class = "row g-2 small",
+              div(class = "col-md-3", strong("Dataset: "), span(class = "text-primary fw-bold", fname)),
+              div(class = "col-md-3", strong("Rows: "), span(class = "tabular-nums", format_number(p$n_rows))),
+              div(class = "col-md-3", strong("Columns: "), span(class = "tabular-nums", format_number(p$n_cols))),
+              div(class = "col-md-3", strong("Health Score: "), span(style = paste0("color: ", q$status_color, "; font-weight: 700;"), paste0(q$score, " / 100 (", q$status, ")")))
+            )
+          ),
+          h5(class = "fw-bold mb-2", "1. Key Statistical Findings"),
+          p(class = "small text-muted mb-2", paste0("Total issues detected: ", nrow(f), " (High Severity: ", n_high, " | Medium Severity: ", n_med, " | Low Severity: ", n_low, ")")),
           if (nrow(f) > 0) {
             tags$ul(
-              class = "list-group list-group-flush mb-3",
-              lapply(seq_len(min(6, nrow(f))), function(i) {
+              class = "list-group list-group-flush mb-4 border rounded",
+              lapply(seq_len(min(8, nrow(f))), function(i) {
                 row <- f[i, ]
                 b_color <- switch(row$severity, "HIGH" = "bg-danger", "MEDIUM" = "bg-warning text-dark", "LOW" = "bg-info text-white", "bg-secondary")
                 tags$li(
-                  class = "list-group-item small",
-                  span(class = paste0("badge me-2 ", b_color), row$severity),
-                  strong(row$category), " \u2014 ", row$message,
-                  div(class = "text-muted small", paste0("Evidence: ", row$evidence, " | Next check: ", row$recommendation))
+                  class = "list-group-item small py-2 px-3",
+                  div(
+                    class = "d-flex align-items-center gap-2 mb-1",
+                    span(class = paste0("badge ", b_color), row$severity),
+                    strong(class = "text-dark", row$category),
+                    span(class = "text-muted", "\u2014"),
+                    span(class = "text-secondary", row$message)
+                  ),
+                  div(class = "text-muted small ps-3", paste0("Evidence: ", row$evidence, " | Next check: ", row$recommendation))
                 )
               })
             )
           } else {
-            p(class = "text-success", "No major automated issues detected under the selected checks.")
+            div(class = "alert alert-success small mb-4", icon("check-circle", class = "me-1"), "No automated quality or anomaly issues detected across tested heuristics.")
           },
-          h5("2. Recommended Next Investigation Steps"),
+          h5(class = "fw-bold mb-2", "2. Recommended Next Investigation Steps"),
           tags$ol(
-            class = "small",
-            tags$li("Examine columns with High severity missingness and verify data logging protocols."),
+            class = "small text-secondary mb-4 ps-3",
+            tags$li("Examine columns with High severity missingness and verify upstream logging protocols."),
             tags$li("Inspect duplicate rows before modeling to prevent artificial inflation of sample weights."),
             tags$li("Evaluate multicollinear variable pairs to prevent coefficient instability in regression models."),
-            tags$li("Assess representation distributions across sub-populations.")
+            tags$li("Assess representation distributions across sub-populations and demographic cohorts.")
           ),
           div(
-            class = "alert alert-warning small mt-4 mb-0",
-            strong("Report Disclaimer: "),
-            "This report is an automated statistical investigation. Detected patterns are indicators for further investigation and should not automatically be interpreted as data errors, causal relationships, confirmed leakage, or confirmed bias."
+            class = "p-3 bg-light border rounded small text-muted",
+            strong(icon("triangle-exclamation", class = "text-warning me-1"), "Methodological Integrity Notice: "),
+            "This report is an automated statistical investigation. Detected patterns are heuristic indicators for further exploration and should not automatically be interpreted as confirmed errors, confirmed leakage, or causal relationships."
           )
         )
       )

@@ -21,165 +21,172 @@ for (f in r_files) {
 theme_custom <- bslib::bs_theme(
   version = 5,
   bootswatch = "zephyr",
-  primary = "#1e40af",
+  primary = "#2563eb",
   secondary = "#64748b",
-  success = "#16a34a",
-  warning = "#d97706",
-  danger = "#dc2626",
+  success = "#10b981",
+  warning = "#f59e0b",
+  danger = "#ef4444",
   info = "#0284c7"
 )
 
 # ---- Application UI ---------------------------------------------------------
 ui <- bslib::page_sidebar(
   theme = theme_custom,
-  title = div(
-    class = "d-flex align-items-center gap-2",
-    icon("magnifying-glass-chart", class = "text-primary"),
-    span(class = "fw-bold", "DATA DETECTIVE PRO"),
-    span(class = "text-muted fs-6 d-none d-md-inline", "| Intelligent Exploration & Interactive Data Quality Workbench")
-  ),
+  title = NULL,
+  window_title = "Data Detective Pro | Intelligent Data Intelligence Platform",
 
-  # ---- Sidebar --------------------------------------------------------------
+  # ---- Persistent Deep Navy Sidebar ----------------------------------------
   sidebar = bslib::sidebar(
-    width = 300,
+    width = 260,
     open = "desktop",
-    title = "Dataset & Controls",
+    title = NULL,
+    class = "sidebar",
 
-    # Upload Section
-    h6(class = "fw-bold text-uppercase text-muted small mb-2", "Upload Dataset"),
-    fileInput(
-      "user_file",
-      label = NULL,
-      accept = c(".csv", ".tsv", ".txt", ".rds"),
-      buttonLabel = "Choose Dataset",
-      placeholder = "Upload .csv...",
-      width = "100%"
-    ),
-
-    # Sample Datasets
     div(
-      class = "mb-3",
-      span(class = "small text-muted d-block mb-1", "Or explore immediate benchmark samples:"),
+      class = "sidebar-inner",
+
+      # Brand Title & Logo
       div(
-        class = "btn-group-vertical w-100 gap-1",
-        actionButton("btn_clean_sample", "Clean HR Dataset", icon = icon("check"), class = "btn btn-sm btn-outline-success text-start"),
-        actionButton("btn_messy_sample", "Messy Anomaly Dataset", icon = icon("triangle-exclamation"), class = "btn btn-sm btn-outline-warning text-start"),
-        actionButton("btn_sales_sample", "Realistic Sales Dataset", icon = icon("chart-line"), class = "btn btn-sm btn-outline-primary text-start")
+        class = "d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary border-opacity-25",
+        div(class = "header-brand-icon", icon("magnifying-glass-chart")),
+        div(
+          div(class = "fw-bold text-white small", "DATA DETECTIVE"),
+          div(class = "text-muted", style = "font-size: 0.65rem; letter-spacing: 0.05em;", "DATA INTELLIGENCE PRO")
+        )
+      ),
+
+      # Ingestion & Sample Dataset Box
+      div(
+        class = "sidebar-ingestion-box",
+        div(class = "sidebar-section-title text-uppercase mb-1", "Upload Dataset"),
+        fileInput(
+          "user_file",
+          label = NULL,
+          accept = c(".csv", ".tsv", ".txt", ".rds"),
+          buttonLabel = "Browse",
+          placeholder = "Upload .csv...",
+          width = "100%"
+        ),
+        div(class = "sidebar-section-title text-uppercase mb-1 mt-2", "Benchmark Samples"),
+        div(
+          class = "sidebar-sample-btn-group",
+          actionButton("btn_clean_sample", "Clean HR Sample", icon = icon("check", class = "text-success"), class = "sidebar-sample-btn"),
+          actionButton("btn_messy_sample", "Messy Anomaly", icon = icon("triangle-exclamation", class = "text-warning"), class = "sidebar-sample-btn"),
+          actionButton("btn_sales_sample", "Realistic Sales", icon = icon("chart-line", class = "text-info"), class = "sidebar-sample-btn")
+        )
+      ),
+
+      # Navigation Section: WORKSPACE
+      div(class = "sidebar-section-title", "Workspace"),
+      div(
+        class = "sidebar-nav-list",
+        actionButton("nav_overview", tagList(icon("gauge-high", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Overview")), class = "sidebar-nav-btn active", `data-tab-target` = "tab_overview"),
+        actionButton("nav_workbench", tagList(icon("wand-magic-sparkles", class = "sidebar-nav-icon text-primary"), span(class = "sidebar-nav-label", "Data Preparation")), class = "sidebar-nav-btn", `data-tab-target` = "tab_workbench"),
+        actionButton("nav_column_studio", tagList(icon("columns", class = "sidebar-nav-icon text-info"), span(class = "sidebar-nav-label", "Column Studio")), class = "sidebar-nav-btn", `data-tab-target` = "tab_column_studio")
+      ),
+
+      # Navigation Section: DATA QUALITY
+      div(class = "sidebar-section-title", "Data Quality & Fixing"),
+      div(
+        class = "sidebar-nav-list",
+        actionButton("nav_quality", tagList(icon("shield-halved", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Quality Hub")), class = "sidebar-nav-btn", `data-tab-target` = "tab_quality"),
+        actionButton("nav_missing", tagList(icon("chart-simple", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Missing Values")), class = "sidebar-nav-btn", `data-tab-target` = "tab_missing"),
+        actionButton("nav_duplicates", tagList(icon("copy", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Duplicate Records")), class = "sidebar-nav-btn", `data-tab-target` = "tab_duplicates"),
+        actionButton("nav_outliers", tagList(icon("arrow-up-right-dots", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Outlier Diagnostics")), class = "sidebar-nav-btn", `data-tab-target` = "tab_outliers")
+      ),
+
+      # Navigation Section: ADVANCED ANALYTICS
+      div(class = "sidebar-section-title", "Advanced Analytics"),
+      div(
+        class = "sidebar-nav-list",
+        actionButton("nav_distributions", tagList(icon("chart-area", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Distributions")), class = "sidebar-nav-btn", `data-tab-target` = "tab_distributions"),
+        actionButton("nav_correlations", tagList(icon("braille", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Correlation Matrix")), class = "sidebar-nav-btn", `data-tab-target` = "tab_correlations"),
+        actionButton("nav_relationships", tagList(icon("circle-nodes", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Visual Analytics & 3D")), class = "sidebar-nav-btn", `data-tab-target` = "tab_relationships"),
+        actionButton("nav_leakage", tagList(icon("bullseye", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Leakage Screening")), class = "sidebar-nav-btn", `data-tab-target` = "tab_leakage"),
+        actionButton("nav_bias", tagList(icon("scale-unbalanced", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Bias & Representation")), class = "sidebar-nav-btn", `data-tab-target` = "tab_bias")
+      ),
+
+      # Navigation Section: DELIVERABLES
+      div(class = "sidebar-section-title", "Deliverables"),
+      div(
+        class = "sidebar-nav-list",
+        actionButton("nav_report", tagList(icon("file-lines", class = "sidebar-nav-icon"), span(class = "sidebar-nav-label", "Investigation Report")), class = "sidebar-nav-btn", `data-tab-target` = "tab_report")
+      ),
+
+      # Sidebar Status & Actions Footer
+      div(
+        class = "sidebar-footer mt-auto",
+        uiOutput("sidebar_dataset_status"),
+        div(
+          class = "d-flex gap-1 mt-2",
+          actionButton("btn_sidebar_undo", "Undo", icon = icon("arrow-rotate-left"), class = "btn btn-sm btn-outline-secondary w-50", style = "font-size: 0.75rem; color: #cbd5e1; border-color: #334155;"),
+          downloadButton("btn_sidebar_export", "Export", class = "btn btn-sm btn-outline-success w-50", style = "font-size: 0.75rem;")
+        ),
+        div(
+          class = "d-flex gap-1 mt-1",
+          actionButton("btn_reset", "Reset", icon = icon("rotate-left"), class = "btn btn-sm btn-outline-danger w-50", style = "font-size: 0.75rem;"),
+          actionButton("btn_settings", "Settings", icon = icon("gear"), class = "btn btn-sm btn-outline-secondary w-50", style = "font-size: 0.75rem; color: #cbd5e1; border-color: #334155;")
+        ),
+        div(
+          class = "sidebar-privacy-badge mt-3",
+          icon("shield-halved"),
+          span("100% Client/Local Processing")
+        )
       )
-    ),
-
-    hr(class = "my-2"),
-
-    # Persistent Dataset Status Pill
-    uiOutput("sidebar_dataset_status"),
-
-    hr(class = "my-2"),
-
-    # Actions
-    h6(class = "fw-bold text-uppercase text-muted small mb-2", "Analysis & Fixing Controls"),
-    actionButton("btn_sidebar_undo", "Undo Last Fix", icon = icon("arrow-rotate-left"), class = "btn btn-sm btn-outline-warning w-100 mb-2"),
-    downloadButton("btn_sidebar_export", "Export Cleaned CSV", class = "btn btn-sm btn-outline-success w-100 mb-2"),
-    actionButton("btn_reset", "Reset to Raw Baseline", icon = icon("rotate-left"), class = "btn btn-sm btn-outline-danger w-100 mb-2"),
-    actionButton("btn_settings", "Threshold Settings", icon = icon("gear"), class = "btn btn-sm btn-outline-secondary w-100 mb-2"),
-
-    # Security & Privacy badge
-    div(
-      class = "mt-4 p-2 bg-light border rounded small text-muted text-center",
-      icon("shield-halved", class = "text-success me-1"),
-      "100% Client/Local Processing. No dataset leaves your browser."
     )
   ),
 
-  # ---- Main Content Panel ---------------------------------------------------
+  # ---- Main Workspace Panel ------------------------------------------------
   tagList(
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
       tags$script(src = "app.js")
     ),
 
-    # Top KPI Summary Cards Row
-    uiOutput("top_summary_cards"),
+    div(
+      class = "d-flex flex-column min-vh-100",
 
-    # Navigation Tabs
-    navset_card_tab(
-      id = "main_tabs",
-
-      # 1. Overview
-      nav_panel(
-        title = tagList(icon("gauge-high"), " Overview"),
-        mod_overview_ui("mod_overview")
+      # Top Header Bar
+      div(
+        class = "app-header-bar",
+        div(
+          class = "header-left",
+          div(class = "header-brand-icon d-md-none", icon("magnifying-glass-chart")),
+          div(
+            class = "header-brand",
+            span("DATA DETECTIVE"),
+            span(class = "header-brand-tag", "PRO")
+          ),
+          uiOutput("header_breadcrumb")
+        ),
+        div(
+          class = "header-right",
+          uiOutput("header_dataset_pill"),
+          actionButton("btn_header_undo", "Undo Fix", icon = icon("arrow-rotate-left"), class = "btn btn-sm btn-outline-secondary d-none d-sm-inline-flex"),
+          downloadButton("btn_header_export", "Export CSV", class = "btn btn-sm btn-outline-success d-none d-sm-inline-flex"),
+          actionButton("btn_header_settings", "Settings", icon = icon("gear"), class = "btn btn-sm btn-outline-secondary")
+        )
       ),
 
-      # 2. Quality & Fixes Workbench (CORE INTERACTIVE UPGRADE)
-      nav_panel(
-        title = tagList(icon("wand-magic-sparkles", class = "text-primary"), " Quality & Fixes Workbench"),
-        mod_workbench_ui("mod_workbench")
-      ),
-
-      # 3. Column Studio (CORE UNIVARIATE DRILLDOWN)
-      nav_panel(
-        title = tagList(icon("columns", class = "text-info"), " Column Studio"),
-        mod_column_studio_ui("mod_column_studio")
-      ),
-
-      # 4. Data Quality
-      nav_panel(
-        title = tagList(icon("shield-halved"), " Data Quality"),
-        mod_quality_ui("mod_quality")
-      ),
-
-      # 5. Missing Values
-      nav_panel(
-        title = tagList(icon("magnifying-glass-chart"), " Missing Values"),
-        mod_missing_ui("mod_missing")
-      ),
-
-      # 6. Duplicates
-      nav_panel(
-        title = tagList(icon("copy"), " Duplicates"),
-        mod_duplicates_ui("mod_duplicates")
-      ),
-
-      # 7. Outliers
-      nav_panel(
-        title = tagList(icon("chart-simple"), " Outliers"),
-        mod_outliers_ui("mod_outliers")
-      ),
-
-      # 8. Distributions
-      nav_panel(
-        title = tagList(icon("chart-area"), " Distributions"),
-        mod_distributions_ui("mod_distributions")
-      ),
-
-      # 9. Correlations
-      nav_panel(
-        title = tagList(icon("braille"), " Correlations"),
-        mod_correlation_ui("mod_correlation")
-      ),
-
-      # 10. Relationships
-      nav_panel(
-        title = tagList(icon("circle-nodes"), " Relationships"),
-        mod_relationships_ui("mod_relationships")
-      ),
-
-      # 11. Leakage
-      nav_panel(
-        title = tagList(icon("bullseye"), " Leakage"),
-        mod_leakage_ui("mod_leakage")
-      ),
-
-      # 12. Bias
-      nav_panel(
-        title = tagList(icon("scale-unbalanced"), " Bias"),
-        mod_bias_ui("mod_bias")
-      ),
-
-      # 13. Investigation Report
-      nav_panel(
-        title = tagList(icon("file-lines"), " Investigation Report"),
-        mod_report_ui("mod_report")
+      # Spacious Main Workspace Content
+      div(
+        class = "app-workspace-content flex-grow-1",
+        bslib::navset_hidden(
+          id = "main_tabs",
+          bslib::nav_panel("tab_overview", mod_overview_ui("mod_overview")),
+          bslib::nav_panel("tab_workbench", mod_workbench_ui("mod_workbench")),
+          bslib::nav_panel("tab_column_studio", mod_column_studio_ui("mod_column_studio")),
+          bslib::nav_panel("tab_quality", mod_quality_ui("mod_quality")),
+          bslib::nav_panel("tab_missing", mod_missing_ui("mod_missing")),
+          bslib::nav_panel("tab_duplicates", mod_duplicates_ui("mod_duplicates")),
+          bslib::nav_panel("tab_outliers", mod_outliers_ui("mod_outliers")),
+          bslib::nav_panel("tab_distributions", mod_distributions_ui("mod_distributions")),
+          bslib::nav_panel("tab_correlations", mod_correlation_ui("mod_correlation")),
+          bslib::nav_panel("tab_relationships", mod_relationships_ui("mod_relationships")),
+          bslib::nav_panel("tab_leakage", mod_leakage_ui("mod_leakage")),
+          bslib::nav_panel("tab_bias", mod_bias_ui("mod_bias")),
+          bslib::nav_panel("tab_report", mod_report_ui("mod_report"))
+        )
       )
     )
   )
@@ -193,6 +200,81 @@ server <- function(input, output, session) {
   dataset <- reactiveVal(NULL) # active working dataset
   dataset_history <- reactiveVal(list())
   dataset_name <- reactiveVal("Awaiting Dataset")
+
+  # Navigation State
+  active_nav <- reactiveVal("tab_overview")
+
+  switch_to_tab <- function(tab_id) {
+    active_nav(tab_id)
+    bslib::nav_select("main_tabs", tab_id)
+  }
+
+  observeEvent(input$nav_overview,       { switch_to_tab("tab_overview") })
+  observeEvent(input$nav_workbench,      { switch_to_tab("tab_workbench") })
+  observeEvent(input$nav_column_studio,  { switch_to_tab("tab_column_studio") })
+  observeEvent(input$nav_quality,        { switch_to_tab("tab_quality") })
+  observeEvent(input$nav_missing,        { switch_to_tab("tab_missing") })
+  observeEvent(input$nav_duplicates,     { switch_to_tab("tab_duplicates") })
+  observeEvent(input$nav_outliers,       { switch_to_tab("tab_outliers") })
+  observeEvent(input$nav_distributions,  { switch_to_tab("tab_distributions") })
+  observeEvent(input$nav_correlations,   { switch_to_tab("tab_correlations") })
+  observeEvent(input$nav_relationships,  { switch_to_tab("tab_relationships") })
+  observeEvent(input$nav_leakage,        { switch_to_tab("tab_leakage") })
+  observeEvent(input$nav_bias,           { switch_to_tab("tab_bias") })
+  observeEvent(input$nav_report,         { switch_to_tab("tab_report") })
+
+  observeEvent(input$selected_nav_js, {
+    req(input$selected_nav_js)
+    switch_to_tab(input$selected_nav_js)
+  })
+
+  # Header Dynamic Breadcrumb
+  output$header_breadcrumb <- renderUI({
+    curr <- active_nav()
+    title <- switch(
+      curr,
+      "tab_overview" = "Overview Dashboard",
+      "tab_workbench" = "Data Preparation & Fixes Workbench",
+      "tab_column_studio" = "Column Studio",
+      "tab_quality" = "Data Quality Hub",
+      "tab_missing" = "Missing Values Analysis",
+      "tab_duplicates" = "Duplicate Records",
+      "tab_outliers" = "Outlier Diagnostics",
+      "tab_distributions" = "Distributions",
+      "tab_correlations" = "Correlation Matrix",
+      "tab_relationships" = "Visual Analytics & 3D Explorer",
+      "tab_leakage" = "Data Leakage Screening",
+      "tab_bias" = "Bias & Representation",
+      "tab_report" = "Investigation Report",
+      "Overview"
+    )
+    div(
+      class = "header-breadcrumb ms-2",
+      span(class = "d-none d-md-inline text-muted", "Platform"),
+      span(class = "breadcrumb-separator d-none d-md-inline", "/"),
+      span(class = "breadcrumb-current", title)
+    )
+  })
+
+  # Header Dataset Status Pill
+  output$header_dataset_pill <- renderUI({
+    df <- dataset()
+    fname <- dataset_name()
+    h <- dataset_history()
+    v_num <- length(h)
+
+    if (is.null(df)) {
+      div(class = "header-dataset-pill", span(class = "dot-indicator bg-warning"), "Awaiting Dataset")
+    } else {
+      div(
+        class = "header-dataset-pill",
+        span(class = "dot-indicator"),
+        span(class = "fw-bold text-truncate", style = "max-width: 130px;", fname),
+        span(class = "text-muted", paste0("(", format_number(nrow(df)), " \u00d7 ", ncol(df), ")")),
+        span(class = "badge bg-primary text-white", paste0("v", v_num))
+      )
+    }
+  })
 
   # Load sample datasets
   load_sample <- function(path, name) {
@@ -289,8 +371,8 @@ server <- function(input, output, session) {
     })
   })
 
-  # Sidebar Undo Handler
-  observeEvent(input$btn_sidebar_undo, {
+  # Undo Action Handlers (Sidebar & Header)
+  do_undo <- function() {
     h <- dataset_history()
     if (length(h) > 1) {
       h_new <- h[seq_len(length(h) - 1)]
@@ -301,19 +383,48 @@ server <- function(input, output, session) {
     } else {
       showNotification("Already at baseline raw version. Nothing to undo.", type = "warning")
     }
-  })
+  }
 
-  # Sidebar Export Handler
+  observeEvent(input$btn_sidebar_undo, { do_undo() })
+  observeEvent(input$btn_header_undo, { do_undo() })
+
+  # Settings Modal Handlers (Sidebar & Header)
+  show_settings_modal <- function() {
+    showModal(modalDialog(
+      title = "Investigation Threshold Settings",
+      p(class = "small text-muted", "Configure heuristics used by Data Detective engines. These are configurable heuristics, not universal standards."),
+      sliderInput("set_missing", "Missing Values Alert Threshold (%):", min = 1, max = 50, value = 5, step = 1),
+      sliderInput("set_outlier", "Outlier IQR Multiplier:", min = 1.0, max = 3.0, value = 1.5, step = 0.25),
+      sliderInput("set_corr", "Strong Correlation Threshold (|r|):", min = 0.5, max = 0.95, value = 0.70, step = 0.05),
+      easyClose = TRUE,
+      footer = modalButton("Done")
+    ))
+  }
+
+  observeEvent(input$btn_settings, { show_settings_modal() })
+  observeEvent(input$btn_header_settings, { show_settings_modal() })
+
+  # Export Handler (Sidebar & Header)
+  export_fn <- function(file) {
+    df <- dataset()
+    req(df)
+    utils::write.csv(df, file, row.names = FALSE)
+  }
+
   output$btn_sidebar_export <- downloadHandler(
     filename = function() {
       orig_name <- if (!is.null(dataset_name())) dataset_name() else "dataset"
       paste0(tools::file_path_sans_ext(orig_name), "_cleaned.csv")
     },
-    content = function(file) {
-      df <- dataset()
-      req(df)
-      utils::write.csv(df, file, row.names = FALSE)
-    }
+    content = export_fn
+  )
+
+  output$btn_header_export <- downloadHandler(
+    filename = function() {
+      orig_name <- if (!is.null(dataset_name())) dataset_name() else "dataset"
+      paste0(tools::file_path_sans_ext(orig_name), "_cleaned.csv")
+    },
+    content = export_fn
   )
 
   # Reset button (reverts working dataset to raw baseline)
@@ -355,18 +466,18 @@ server <- function(input, output, session) {
 
     if (is.null(df)) {
       div(
-        class = "p-2 bg-light border rounded small",
-        div(strong("Dataset: "), span(class = "text-warning", "None")),
-        div(strong("Status: "), span(class = "text-secondary", "Awaiting Upload"))
+        class = "sidebar-status-box",
+        div(class = "sidebar-status-row", span(class = "sidebar-status-label", "Dataset:"), span(class = "sidebar-status-val text-warning", "None")),
+        div(class = "sidebar-status-row", span(class = "sidebar-status-label", "Status:"), span(class = "sidebar-status-val text-secondary", "Awaiting Ingestion"))
       )
     } else {
       div(
-        class = "p-2 bg-light border rounded small",
-        div(strong("Dataset: "), span(class = "text-primary text-truncate d-inline-block", style = "max-width: 170px;", fname)),
-        div(strong("Active Rows: "), format_number(nrow(df))),
-        div(strong("Columns: "), format_number(ncol(df))),
-        div(strong("Version: "), span(class = "badge bg-info text-white", paste0("v", v_num))),
-        div(strong("Status: "), span(class = "text-success fw-bold", "\u2713 Live & Analyzed"))
+        class = "sidebar-status-box",
+        div(class = "sidebar-status-row", span(class = "sidebar-status-label", "Dataset:"), span(class = "sidebar-status-val text-truncate d-inline-block", style = "max-width: 120px;", fname)),
+        div(class = "sidebar-status-row", span(class = "sidebar-status-label", "Active Rows:"), span(class = "sidebar-status-val tabular-nums", format_number(nrow(df)))),
+        div(class = "sidebar-status-row", span(class = "sidebar-status-label", "Columns:"), span(class = "sidebar-status-val tabular-nums", format_number(ncol(df)))),
+        div(class = "sidebar-status-row", span(class = "sidebar-status-label", "Version:"), span(class = "badge bg-primary text-white", paste0("v", v_num))),
+        div(class = "sidebar-status-row", span(class = "sidebar-status-label", "Status:"), span(class = "text-success fw-bold", "\u2713 Live & Analyzed"))
       )
     }
   })
@@ -466,19 +577,6 @@ server <- function(input, output, session) {
       div(class = "metric-card", div(class = "metric-title", "CATEGORICAL VARS"), div(class = "metric-value", p$n_categorical)),
       div(class = "metric-card card-alert", div(class = "metric-title", "QUALITY FINDINGS"), div(class = "metric-value", n_issues))
     )
-  })
-
-  # Settings Modal
-  observeEvent(input$btn_settings, {
-    showModal(modalDialog(
-      title = "Investigation Threshold Settings",
-      p(class = "small text-muted", "Configure heuristics used by Data Detective engines. These are configurable heuristics, not universal standards."),
-      sliderInput("set_missing", "Missing Values Alert Threshold (%):", min = 1, max = 50, value = 5, step = 1),
-      sliderInput("set_outlier", "Outlier IQR Multiplier:", min = 1.0, max = 3.0, value = 1.5, step = 0.25),
-      sliderInput("set_corr", "Strong Correlation Threshold (|r|):", min = 0.5, max = 0.95, value = 0.70, step = 0.05),
-      easyClose = TRUE,
-      footer = modalButton("Done")
-    ))
   })
 
   # ---- Submodule Servers ----------------------------------------------------

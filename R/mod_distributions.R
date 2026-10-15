@@ -119,11 +119,10 @@ mod_distributions_server <- function(id, data_r) {
       plot_df <- data.frame(val = clean_v)
 
       ggplot2::ggplot(plot_df, ggplot2::aes(x = val)) +
-        ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(density)), bins = 30, fill = "#93c5fd", color = "#ffffff", alpha = 0.75) +
-        ggplot2::geom_density(color = "#1d4ed8", linewidth = 1.2) +
+        ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(density)), bins = 30, fill = "#2563eb", color = "#ffffff", alpha = 0.7) +
+        ggplot2::geom_density(color = "#dc2626", linewidth = 1.0) +
         ggplot2::labs(title = paste0("Empirical Distribution: ", input$select_num), x = input$select_num, y = "Density") +
-        ggplot2::theme_minimal(base_size = 12) +
-        ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = 12))
+        theme_detective()
     })
 
     # Numeric Stats Grid
@@ -190,11 +189,11 @@ mod_distributions_server <- function(id, data_r) {
       plot_df$Class <- factor(plot_df$Class, levels = rev(plot_df$Class))
 
       ggplot2::ggplot(plot_df, ggplot2::aes(x = Class, y = Count)) +
-        ggplot2::geom_col(fill = "#6366f1", width = 0.6) +
+        ggplot2::geom_col(fill = "#2563eb", width = 0.6, alpha = 0.85) +
+        ggplot2::geom_text(ggplot2::aes(label = format_number(Count)), hjust = -0.15, size = 3.6, color = "#0f172a", fontface = "bold") +
         ggplot2::coord_flip() +
         ggplot2::labs(title = paste0("Class Frequencies: ", input$select_cat), x = "", y = "Record Count") +
-        ggplot2::theme_minimal(base_size = 12) +
-        ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = 12))
+        theme_detective()
     })
 
     # Categorical Table

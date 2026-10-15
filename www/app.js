@@ -1,11 +1,11 @@
 /**
- * DATA DETECTIVE PRO: High-Craft Kinetic Interface Engine
- * Implements Emil Kowalski Design Engineering & Apple Human Interface guidelines:
- * - Dynamic 60/120fps Cursor Spotlight tracking (Linear / Vercel style)
- * - Hardware-accelerated tactile press micro-interactions
+ * DATA DETECTIVE PRO: High-Craft SaaS Interface Engine
+ * Features:
+ * - Dynamic Sidebar Active State synchronization
  * - Universal keyboard accessibility (Escape modal close, Cmd/Ctrl+K query focus)
  * - Tooltip instant-chaining (zero delay on adjacent tooltips)
- * - Copy-to-clipboard micro-feedback with spring animation
+ * - Copy-to-clipboard micro-feedback with tactile spring animation
+ * - Tabular number enforcement & smooth scroll
  */
 
 (function () {
@@ -15,10 +15,30 @@
   let rafId = null;
 
   document.addEventListener("DOMContentLoaded", function () {
-    console.log("Data Detective Pro: Kinetic Interface Engine Initialized.");
+    console.log("Data Detective Pro: SaaS Interface Engine Initialized.");
 
     // -------------------------------------------------------------------------
-    // 1. Dynamic Cursor Spotlight Tracking (Linear & Raycast Effect)
+    // 1. Sidebar Nav Active State & Instant View Switching
+    // -------------------------------------------------------------------------
+    document.addEventListener("click", function (e) {
+      const navBtn = e.target.closest(".sidebar-nav-btn");
+      if (!navBtn) return;
+
+      // Update active state in DOM immediately for zero-latency feel
+      document.querySelectorAll(".sidebar-nav-btn").forEach(function (btn) {
+        btn.classList.remove("active");
+      });
+      navBtn.classList.add("active");
+
+      // Notify Shiny of selected tab if custom data attribute is present
+      const tabTarget = navBtn.getAttribute("data-tab-target");
+      if (tabTarget && window.Shiny && window.Shiny.setInputValue) {
+        window.Shiny.setInputValue("selected_nav_js", tabTarget, { priority: "event" });
+      }
+    });
+
+    // -------------------------------------------------------------------------
+    // 2. Dynamic Cursor Spotlight Tracking (Linear & Raycast Effect)
     // -------------------------------------------------------------------------
     document.addEventListener("mousemove", function (e) {
       if (rafId) cancelAnimationFrame(rafId);
@@ -37,7 +57,7 @@
     });
 
     // -------------------------------------------------------------------------
-    // 2. Universal Keyboard Shortcuts
+    // 3. Universal Keyboard Shortcuts
     // -------------------------------------------------------------------------
     document.addEventListener("keydown", function (e) {
       // Escape: Dismiss active modal dialog with clean focus restoration
@@ -56,8 +76,8 @@
       // Cmd/Ctrl + K or '/' : Jump focus to query input or column selector
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        const queryInput = document.getElementById("mod_workbench-query_input");
-        const colSelect = document.getElementById("mod_column_studio-col_select");
+        const queryInput = document.getElementById("mod_workbench-nlp_query_input");
+        const colSelect = document.getElementById("mod_column_studio-selected_column");
         if (queryInput && document.activeElement !== queryInput) {
           queryInput.focus();
           queryInput.select();
@@ -68,7 +88,7 @@
     });
 
     // -------------------------------------------------------------------------
-    // 3. Copy-to-Clipboard Micro-Feedback
+    // 4. Copy-to-Clipboard Micro-Feedback
     // -------------------------------------------------------------------------
     document.addEventListener("click", function (e) {
       const copyBtn = e.target.closest(
@@ -90,7 +110,7 @@
     });
 
     // -------------------------------------------------------------------------
-    // 4. Emil Kowalski Tooltip Instant Chaining
+    // 5. Emil Kowalski Tooltip Instant Chaining
     // -------------------------------------------------------------------------
     document.addEventListener("mouseover", function (e) {
       const tooltipTrigger = e.target.closest("[data-bs-toggle='tooltip'], [title]");
@@ -101,16 +121,6 @@
         tooltipTrigger.setAttribute("data-bs-delay", "0");
       }
       lastActiveTooltipTime = now;
-    });
-
-    // -------------------------------------------------------------------------
-    // 5. Active Tab Pill Smooth Focus
-    // -------------------------------------------------------------------------
-    document.addEventListener("click", function (e) {
-      const tabLink = e.target.closest(".nav-tabs .nav-link");
-      if (tabLink) {
-        tabLink.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
-      }
     });
   });
 })();

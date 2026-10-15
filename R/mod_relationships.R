@@ -11,10 +11,40 @@ mod_relationships_ui <- function(id) {
     div(
       class = "panel-box mb-3",
       div(
-        class = "row align-items-center",
-        div(class = "col-md-5", selectInput(ns("var_x"), "Select Variable X (Independent / Horizontal):", choices = NULL, width = "100%")),
-        div(class = "col-md-5", selectInput(ns("var_y"), "Select Variable Y (Dependent / Vertical):", choices = NULL, width = "100%")),
-        div(class = "col-md-2", div(class = "mt-3", uiOutput(ns("pairing_type_badge"))))
+        class = "d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2",
+        h5(class = "panel-title mb-0", icon("circle-nodes"), " Visual Analytics & Relationship Explorer"),
+        div(
+          class = "d-flex align-items-center gap-2",
+          span(class = "small text-muted fw-bold", "Presentation Mode:"),
+          radioButtons(
+            ns("visual_mode"),
+            label = NULL,
+            choices = c("2D View" = "2d", "3D Isometric View" = "3d"),
+            selected = "2d",
+            inline = TRUE
+          )
+        )
+      ),
+      div(
+        class = "row align-items-center g-2",
+        div(class = "col-md-4", selectInput(ns("var_x"), "Variable X (Horizontal):", choices = NULL, width = "100%")),
+        div(class = "col-md-4", selectInput(ns("var_y"), "Variable Y (Vertical):", choices = NULL, width = "100%")),
+        conditionalPanel(
+          condition = sprintf("input['%s'] == '3d'", ns("visual_mode")),
+          div(class = "col-md-4", selectInput(ns("var_z"), "Variable Z (Depth / Elevation):", choices = NULL, width = "100%"))
+        ),
+        conditionalPanel(
+          condition = sprintf("input['%s'] == '2d'", ns("visual_mode")),
+          div(class = "col-md-4", div(class = "mt-4", uiOutput(ns("pairing_type_badge"))))
+        )
+      ),
+      conditionalPanel(
+        condition = sprintf("input['%s'] == '3d'", ns("visual_mode")),
+        div(
+          class = "row align-items-center mt-2 pt-2 border-top g-2",
+          div(class = "col-md-6", sliderInput(ns("rot_azimuth"), "3D Horizontal Azimuth Angle (\u00b0):", min = 0, max = 360, value = 45, step = 5, width = "100%")),
+          div(class = "col-md-6", sliderInput(ns("rot_elevation"), "3D Vertical Elevation Angle (\u00b0):", min = 10, max = 80, value = 30, step = 5, width = "100%"))
+        )
       )
     ),
 
@@ -23,17 +53,20 @@ mod_relationships_ui <- function(id) {
       class = "row",
       div(
         class = "col-lg-8 col-md-12",
-        div(class = "panel-box mb-3", plotOutput(ns("plot_relationship"), height = "380px"))
+        div(
+          class = "panel-box mb-3",
+          plotOutput(ns("plot_relationship"), height = "400px")
+        )
       ),
       div(
         class = "col-lg-4 col-md-12",
         div(
           class = "panel-box mb-3 h-100",
-          h5(class = "panel-title", icon("circle-info"), " Relationship Summary"),
+          h5(class = "panel-title", icon("circle-info"), " Visual Diagnostics & Summary"),
           uiOutput(ns("relationship_stats")),
           hr(),
           p(class = "small text-muted mb-0",
-            strong("Interpretation Caution: "),
+            strong("Statistical Disclaimer: "),
             "Visualized relationships show empirical joint distribution. They do not demonstrate direct causal mechanisms."
           )
         )
@@ -52,10 +85,12 @@ mod_relationships_ui <- function(id) {
 mod_relationships_server <- function(id, data_r) {
   moduleServer(id, function(input, output, session) {
 
-    # Update X and Y choices
+    # Update X, Y, and Z choices
     observe({
       req(data_r())
       cols <- names(data_r())
+      num_cols <- cols[vapply(data_r(), is.numeric, logical(1))]
+
       if (length(cols) >= 2) {
         updateSelectInput(session, "var_x", choices = cols, selected = cols[1])
         updateSelectInput(session, "var_y", choices = cols, selected = cols[2])
@@ -63,6 +98,10 @@ mod_relationships_server <- function(id, data_r) {
         updateSelectInput(session, "var_x", choices = cols, selected = cols[1])
         updateSelectInput(session, "var_y", choices = cols, selected = cols[1])
       }
+
+      z_choices <- if (length(num_cols) > 0) num_cols else cols
+      z_sel <- if (length(z_choices) >= 3) z_choices[3] else z_choices[1]
+      updateSelectInput(session, "var_z", choices = z_choices, selected = z_sel)
     })
 
     # Detect pair type
@@ -105,14 +144,24 @@ mod_relationships_server <- function(id, data_r) {
         "date_num" = "Date vs Numeric (Timeline)",
         "General Pair"
       )
-      span(class = "badge bg-primary fs-6 p-2", txt)
+      span(class = "badge bg-primary text-white fs-6 p-2", txt)
     })
 
-    # Main Plot
+    # Main Plot (Supports both 2D and 3D Isometric View)
     output$plot_relationship <- renderPlot({
       req(input$var_x, input$var_y, data_r())
       df <- data_r()
       req(input$var_x %in% names(df), input$var_y %in% names(df))
+
+      # ---- 3D Isometric Presentation Mode ----
+      if (!is.null(input$visual_mode) && input$visual_mode == "3d") {
+        req(input$var_z, input$var_z %in% names(df))
+        theta <- if (!is.null(input$rot_azimuth)) as.numeric(input$rot_azimuth) else 45
+        phi <- if (!is.null(input$rot_elevation)) as.numeric(input$rot_elevation) else 30
+        return(project_3d_scatter(df, input$var_x, input$var_y, input$var_z, theta = theta, phi = phi))
+      }
+
+      # ---- 2D Bivariate Presentation Mode ----
       vx <- df[[input$var_x]]
       vy <- df[[input$var_y]]
       pt <- pairing_type()
@@ -124,19 +173,16 @@ mod_relationships_server <- function(id, data_r) {
       sub_y <- vy[valid_idx]
 
       if (pt == "num_num") {
-        # Scatter plot
         p_df <- data.frame(X = as.numeric(sub_x), Y = as.numeric(sub_y))
         if (nrow(p_df) > 5000) p_df <- p_df[sample(nrow(p_df), 5000), ]
 
         ggplot2::ggplot(p_df, ggplot2::aes(x = X, y = Y)) +
-          ggplot2::geom_point(color = "#2563eb", alpha = 0.5, size = 2) +
-          ggplot2::geom_smooth(method = "lm", color = "#ef4444", se = TRUE) +
-          ggplot2::labs(title = paste0("Scatter: ", input$var_y, " vs ", input$var_x), x = input$var_x, y = input$var_y) +
-          ggplot2::theme_minimal(base_size = 12) +
-          ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = 12))
+          ggplot2::geom_point(color = "#2563eb", alpha = 0.55, size = 2.2) +
+          ggplot2::geom_smooth(method = "lm", color = "#ef4444", se = TRUE, linewidth = 0.8) +
+          ggplot2::labs(title = paste0("2D Scatter: ", input$var_y, " vs ", input$var_x), x = input$var_x, y = input$var_y) +
+          theme_detective()
 
       } else if (pt == "cat_num") {
-        # Boxplot
         is_x_cat <- is.character(sub_x) || is.factor(sub_x) || is.logical(sub_x)
         cat_v <- if (is_x_cat) as.character(sub_x) else as.character(sub_y)
         num_v <- if (is_x_cat) as.numeric(sub_y) else as.numeric(sub_x)
@@ -148,39 +194,36 @@ mod_relationships_server <- function(id, data_r) {
         p_df <- p_df[p_df$Group %in% top_grps, ]
 
         ggplot2::ggplot(p_df, ggplot2::aes(x = Group, y = Val, fill = Group)) +
-          ggplot2::geom_boxplot(alpha = 0.7, show.legend = FALSE) +
+          ggplot2::geom_boxplot(alpha = 0.75, show.legend = FALSE, outlier.color = "#ef4444", outlier.alpha = 0.6) +
+          ggplot2::scale_fill_brewer(palette = "Blues") +
           ggplot2::coord_flip() +
-          ggplot2::labs(title = paste0("Boxplot: ", num_name, " by ", cat_name), x = cat_name, y = num_name) +
-          ggplot2::theme_minimal(base_size = 12) +
-          ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = 12))
+          ggplot2::labs(title = paste0("2D Boxplot: ", num_name, " by ", cat_name), x = cat_name, y = num_name) +
+          theme_detective()
 
       } else if (pt == "cat_cat") {
-        # Grouped Bar
         p_df <- data.frame(X = as.character(sub_x), Y = as.character(sub_y))
         top_x <- names(sort(table(p_df$X), decreasing = TRUE))[1:min(8, length(unique(p_df$X)))]
         top_y <- names(sort(table(p_df$Y), decreasing = TRUE))[1:min(5, length(unique(p_df$Y)))]
         p_df <- p_df[p_df$X %in% top_x & p_df$Y %in% top_y, ]
 
         ggplot2::ggplot(p_df, ggplot2::aes(x = X, fill = Y)) +
-          ggplot2::geom_bar(position = "dodge") +
-          ggplot2::labs(title = paste0("Grouped Bar: ", input$var_y, " across ", input$var_x), x = input$var_x, y = "Count", fill = input$var_y) +
-          ggplot2::theme_minimal(base_size = 12) +
-          ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = 12))
+          ggplot2::geom_bar(position = "dodge", alpha = 0.85) +
+          ggplot2::scale_fill_brewer(palette = "Blues") +
+          ggplot2::labs(title = paste0("2D Grouped Distribution: ", input$var_y, " across ", input$var_x), x = input$var_x, y = "Count", fill = input$var_y) +
+          theme_detective()
 
       } else if (pt == "date_num") {
-        # Line Chart over time
         p_df <- data.frame(Date = as.Date(sub_x), Val = as.numeric(sub_y))
         p_df <- p_df[order(p_df$Date), ]
 
         ggplot2::ggplot(p_df, ggplot2::aes(x = Date, y = Val)) +
-          ggplot2::geom_line(color = "#0284c7") +
-          ggplot2::geom_point(color = "#0369a1", size = 1.5, alpha = 0.6) +
-          ggplot2::labs(title = paste0("Timeline: ", input$var_y, " over Date"), x = "Date", y = input$var_y) +
-          ggplot2::theme_minimal(base_size = 12) +
-          ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = 12))
+          ggplot2::geom_line(color = "#0284c7", linewidth = 0.8) +
+          ggplot2::geom_point(color = "#1e40af", size = 1.8, alpha = 0.7) +
+          ggplot2::labs(title = paste0("2D Timeline: ", input$var_y, " over Date"), x = "Date", y = input$var_y) +
+          theme_detective()
       } else {
         ggplot2::ggplot() +
-          ggplot2::annotate("text", x = 1, y = 1, label = "Select variable pairing to view distribution.", size = 4) +
+          ggplot2::annotate("text", x = 1, y = 1, label = "Select variable pairing to view distribution.", size = 4, color = "#94a3b8") +
           ggplot2::theme_void()
       }
     })

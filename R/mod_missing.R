@@ -90,17 +90,16 @@ mod_missing_server <- function(id, missing_r) {
       plot_df$column <- factor(plot_df$column, levels = rev(plot_df$column))
 
       ggplot2::ggplot(plot_df, ggplot2::aes(x = column, y = missing_pct, fill = severity)) +
-        ggplot2::geom_col(width = 0.6) +
-        ggplot2::geom_text(ggplot2::aes(label = paste0(missing_pct, "%")), hjust = -0.15, size = 3.5, color = "#1e293b") +
+        ggplot2::geom_col(width = 0.6, alpha = 0.85) +
+        ggplot2::geom_text(ggplot2::aes(label = paste0(missing_pct, "%")), hjust = -0.15, size = 3.6, color = "#0f172a", fontface = "bold") +
         ggplot2::coord_flip() +
         ggplot2::scale_fill_manual(
-          values = c("Low" = "#3b82f6", "Moderate" = "#f59e0b", "High" = "#ef4444", "Critical" = "#7f1d1d", "Complete" = "#10b981"),
+          values = c("Low" = "#2563eb", "Moderate" = "#f59e0b", "High" = "#ef4444", "Critical" = "#991b1b", "Complete" = "#10b981"),
           drop = FALSE
         ) +
         ggplot2::scale_y_continuous(limits = c(0, max(100, max(plot_df$missing_pct) * 1.15))) +
-        ggplot2::labs(title = "Missing Percentage per Column", x = "", y = "Missing Percentage (%)", fill = "Severity") +
-        ggplot2::theme_minimal(base_size = 12) +
-        ggplot2::theme(panel.grid.minor = ggplot2::element_blank(), plot.title = ggplot2::element_text(face = "bold", size = 12))
+        ggplot2::labs(title = "Missing Percentage per Column", x = "", y = "Missing Percentage (%)", fill = "Severity Tier") +
+        theme_detective()
     })
 
     # Detail Table

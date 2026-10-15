@@ -132,10 +132,10 @@ mod_outliers_server <- function(id, data_r, outlier_r) {
       plot_df <- data.frame(val = clean_v, var = input$num_var)
 
       ggplot2::ggplot(plot_df, ggplot2::aes(x = var, y = val)) +
-        ggplot2::geom_boxplot(fill = "#dbeafe", color = "#1e40af", outlier.color = "#ef4444", outlier.size = 2.5) +
-        ggplot2::labs(title = paste0("Boxplot: ", input$num_var), x = "", y = input$num_var) +
-        ggplot2::theme_minimal(base_size = 12) +
-        ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = 12))
+        ggplot2::geom_boxplot(fill = "#eff6ff", color = "#1e40af", outlier.color = "#ef4444", outlier.size = 2.2) +
+        ggplot2::geom_jitter(width = 0.15, alpha = 0.2, color = "#64748b", size = 1.5) +
+        ggplot2::labs(title = paste0("Boxplot & Spread: ", input$num_var), x = "", y = input$num_var) +
+        theme_detective()
     })
 
     # Histogram
@@ -150,15 +150,14 @@ mod_outliers_server <- function(id, data_r, outlier_r) {
       plot_df <- data.frame(val = clean_v)
 
       p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = val)) +
-        ggplot2::geom_histogram(bins = 30, fill = "#3b82f6", color = "#ffffff", alpha = 0.8) +
+        ggplot2::geom_histogram(bins = 30, fill = "#2563eb", color = "#ffffff", alpha = 0.8) +
         ggplot2::labs(title = paste0("Histogram & Bounds: ", input$num_var), x = input$num_var, y = "Frequency") +
-        ggplot2::theme_minimal(base_size = 12) +
-        ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = 12))
+        theme_detective()
 
       if (!is.null(det)) {
         p <- p +
-          ggplot2::geom_vline(xintercept = det$lower_bound, color = "#ef4444", linetype = "dashed", linewidth = 1) +
-          ggplot2::geom_vline(xintercept = det$upper_bound, color = "#ef4444", linetype = "dashed", linewidth = 1)
+          ggplot2::geom_vline(xintercept = det$lower_bound, color = "#ef4444", linetype = "dashed", linewidth = 0.9) +
+          ggplot2::geom_vline(xintercept = det$upper_bound, color = "#ef4444", linetype = "dashed", linewidth = 0.9)
       }
       p
     })

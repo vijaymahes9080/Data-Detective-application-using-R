@@ -84,13 +84,13 @@ mod_correlation_server <- function(id, data_r) {
       names(melt_df) <- c("Var1", "Var2", "Correlation")
 
       ggplot2::ggplot(melt_df, ggplot2::aes(x = Var1, y = Var2, fill = Correlation)) +
-        ggplot2::geom_tile(color = "white") +
-        ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", Correlation)), color = "#0f172a", size = 3.5) +
-        ggplot2::scale_fill_gradient2(low = "#ef4444", mid = "#f8fafc", high = "#3b82f6", midpoint = 0, limits = c(-1, 1), name = "Correlation") +
-        ggplot2::theme_minimal(base_size = 11) +
+        ggplot2::geom_tile(color = "#ffffff", linewidth = 0.6) +
+        ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", Correlation)), color = "#0f172a", size = 3.6, fontface = "bold") +
+        ggplot2::scale_fill_gradient2(low = "#ef4444", mid = "#f8fafc", high = "#2563eb", midpoint = 0, limits = c(-1, 1), name = "Correlation r") +
+        theme_detective() +
         ggplot2::theme(
-          axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, face = "bold"),
-          axis.text.y = ggplot2::element_text(face = "bold"),
+          axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, face = "bold", color = "#1e293b"),
+          axis.text.y = ggplot2::element_text(face = "bold", color = "#1e293b"),
           axis.title = ggplot2::element_blank(),
           panel.grid = ggplot2::element_blank()
         )

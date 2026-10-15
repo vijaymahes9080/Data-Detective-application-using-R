@@ -226,35 +226,35 @@ mod_column_studio_server <- function(id, data_r) {
 
         if (p_type == "hist_density") {
           ggplot2::ggplot(plot_df, ggplot2::aes(x = val)) +
-            ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(density)), bins = bins, fill = "#3b82f6", color = "#1e40af", alpha = 0.6) +
-            ggplot2::geom_density(color = "#dc2626", size = 1.1) +
-            ggplot2::labs(title = paste0("Histogram & Density Distribution: ", col), x = col, y = "Density") +
-            ggplot2::theme_minimal(base_size = 13)
+            ggplot2::geom_histogram(ggplot2::aes(y = ggplot2::after_stat(density)), bins = bins, fill = "#2563eb", color = "#1e40af", alpha = 0.7) +
+            ggplot2::geom_density(color = "#ef4444", linewidth = 1.0) +
+            ggplot2::labs(title = paste0("Histogram & Empirical Density: ", col), x = col, y = "Density") +
+            theme_detective()
         } else if (p_type == "box") {
           ggplot2::ggplot(plot_df, ggplot2::aes(x = "", y = val)) +
-            ggplot2::geom_boxplot(fill = "#dbeafe", color = "#1e40af", outlier.color = "#dc2626", outlier.size = 2.5) +
+            ggplot2::geom_boxplot(fill = "#eff6ff", color = "#1e40af", outlier.color = "#ef4444", outlier.size = 2.2) +
             ggplot2::geom_jitter(width = 0.15, alpha = 0.25, color = "#64748b") +
             ggplot2::coord_flip() +
             ggplot2::labs(title = paste0("Box Plot & Outlier Spread: ", col), y = col, x = "") +
-            ggplot2::theme_minimal(base_size = 13)
+            theme_detective()
         } else if (p_type == "violin") {
           ggplot2::ggplot(plot_df, ggplot2::aes(x = "", y = val)) +
-            ggplot2::geom_violin(fill = "#e0e7ff", color = "#4338ca", trim = FALSE) +
-            ggplot2::geom_boxplot(width = 0.15, fill = "white", outlier.color = "#dc2626") +
+            ggplot2::geom_violin(fill = "#eff6ff", color = "#2563eb", trim = FALSE, alpha = 0.8) +
+            ggplot2::geom_boxplot(width = 0.15, fill = "#ffffff", color = "#1e40af", outlier.color = "#ef4444") +
             ggplot2::coord_flip() +
             ggplot2::labs(title = paste0("Violin Kernel Density Spread: ", col), y = col, x = "") +
-            ggplot2::theme_minimal(base_size = 13)
+            theme_detective()
         } else if (p_type == "ecdf") {
           ggplot2::ggplot(plot_df, ggplot2::aes(x = val)) +
-            ggplot2::stat_ecdf(geom = "step", color = "#16a34a", size = 1.1) +
-            ggplot2::labs(title = paste0("Empirical Cumulative Distribution Function (ECDF): ", col), x = col, y = "Cumulative Probability (F(x))") +
-            ggplot2::theme_minimal(base_size = 13)
+            ggplot2::stat_ecdf(geom = "step", color = "#10b981", linewidth = 1.0) +
+            ggplot2::labs(title = paste0("Empirical Cumulative Distribution Function (ECDF): ", col), x = col, y = "Cumulative Probability F(x)") +
+            theme_detective()
         } else if (p_type == "qq") {
           ggplot2::ggplot(plot_df, ggplot2::aes(sample = val)) +
-            ggplot2::stat_qq(color = "#2563eb", alpha = 0.7) +
-            ggplot2::stat_qq_line(color = "#dc2626", size = 1) +
+            ggplot2::stat_qq(color = "#2563eb", alpha = 0.7, size = 1.8) +
+            ggplot2::stat_qq_line(color = "#ef4444", linewidth = 0.9) +
             ggplot2::labs(title = paste0("Normal Q-Q Plot: ", col), x = "Theoretical Quantiles", y = "Sample Quantiles") +
-            ggplot2::theme_minimal(base_size = 13)
+            theme_detective()
         }
       } else if (ctype %in% c("character", "factor", "logical")) {
         char_v <- as.character(clean_v)
@@ -274,17 +274,17 @@ mod_column_studio_server <- function(id, data_r) {
 
         if (p_type == "bar_h") {
           ggplot2::ggplot(plot_df, ggplot2::aes(x = Category, y = Count)) +
-            ggplot2::geom_col(fill = "#3b82f6", width = 0.6) +
-            ggplot2::geom_text(ggplot2::aes(label = Count), hjust = -0.15, size = 3.8, color = "#1e293b") +
+            ggplot2::geom_col(fill = "#2563eb", width = 0.6, alpha = 0.85) +
+            ggplot2::geom_text(ggplot2::aes(label = Count), hjust = -0.15, size = 3.6, color = "#0f172a") +
             ggplot2::coord_flip() +
             ggplot2::labs(title = paste0("Category Frequencies: ", col), x = "", y = "Observation Count") +
-            ggplot2::theme_minimal(base_size = 13)
+            theme_detective()
         } else {
           ggplot2::ggplot(plot_df, ggplot2::aes(x = Category, y = Count)) +
-            ggplot2::geom_col(fill = "#3b82f6", width = 0.6) +
-            ggplot2::geom_text(ggplot2::aes(label = Count), vjust = -0.4, size = 3.5, color = "#1e293b") +
+            ggplot2::geom_col(fill = "#2563eb", width = 0.6, alpha = 0.85) +
+            ggplot2::geom_text(ggplot2::aes(label = Count), vjust = -0.4, size = 3.4, color = "#0f172a") +
             ggplot2::labs(title = paste0("Category Frequencies: ", col), x = col, y = "Observation Count") +
-            ggplot2::theme_minimal(base_size = 13) +
+            theme_detective() +
             ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 35, hjust = 1))
         }
       } else if (ctype %in% c("date", "datetime")) {
@@ -292,10 +292,10 @@ mod_column_studio_server <- function(id, data_r) {
         tab_dates <- sort(table(d_clean))
         plot_df <- data.frame(Date = as.Date(names(tab_dates)), Count = as.numeric(tab_dates))
         ggplot2::ggplot(plot_df, ggplot2::aes(x = Date, y = Count)) +
-          ggplot2::geom_line(color = "#2563eb", size = 1) +
+          ggplot2::geom_line(color = "#2563eb", linewidth = 0.9) +
           ggplot2::geom_point(color = "#1d4ed8", size = 2) +
           ggplot2::labs(title = paste0("Observation Timeline Frequency: ", col), x = "Date", y = "Count") +
-          ggplot2::theme_minimal(base_size = 13)
+          theme_detective()
       }
     })
 

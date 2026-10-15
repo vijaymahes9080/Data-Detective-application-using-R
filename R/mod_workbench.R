@@ -1266,7 +1266,7 @@ mod_workbench_server <- function(id, data_working, data_raw, history_stack, find
         ggplot2::geom_vline(xintercept = b[2], color = "#ef4444", linetype = "dashed", size = 1) +
         ggplot2::annotate("text", x = b[2], y = Inf, label = paste0(" Upper Bound: ", round(b[2], 2)), vjust = 2, hjust = -0.1, color = "#ef4444", fontface = "bold") +
         ggplot2::labs(title = paste0("Distribution & Boundary Fences for '", col, "'"), x = col, y = "Count") +
-        ggplot2::theme_minimal(base_size = 13)
+        theme_detective()
     })
 
     observeEvent(input$btn_out_preview, {
