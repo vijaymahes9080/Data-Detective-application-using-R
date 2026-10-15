@@ -1,19 +1,16 @@
 /* ==============================================================================
-   DATA DETECTIVE PRO: High-Craft Design System & Interaction Stylesheet
-   Crafted with:
-   - Emil Kowalski's Animation Principles (Natural cubic-bezier, Tactile Feedback)
-   - Break-UI Defensive Standards (min-width: 0, flex-shrink: 0, overflow-wrap)
-   - Anti-Slop Intentional Visual Direction (High-contrast, Curated Tokens)
-   - Data-Dense Dashboard Intelligence & Tabular Numerics
-   Compatible with bslib (Bootstrap 5) & WebAssembly/Shinylive
+   DATA DETECTIVE PRO: Industry-Grade Design System & Kinetic Interface
+   Crafted following Emil Kowalski Design Engineering, Apple Human Interface,
+   and Break-UI defensive resilience standards.
    ============================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap');
 
 :root {
   /* Surface Tokens */
   --bg-canvas: #f8fafc;
-  --bg-card: #ffffff;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --bg-card-solid: #ffffff;
   --bg-subtle: #f1f5f9;
   --bg-inset: #e2e8f0;
 
@@ -23,53 +20,75 @@
   --text-muted: #64748b;
   --text-faint: #94a3b8;
 
-  /* Brand & Semantic Tokens */
+  /* Brand Palette (Tailored HSL) */
   --brand-primary: #1e40af;
   --brand-primary-hover: #1d4ed8;
+  --brand-primary-glow: rgba(30, 64, 175, 0.25);
   --brand-primary-subtle: #eff6ff;
   --brand-secondary: #3b82f6;
-  --accent-cta: #d97706;
-  --accent-cta-hover: #b45309;
-  
-  --status-success: #16a34a;
-  --status-success-bg: #f0fdf4;
-  --status-warning: #d97706;
+  --brand-secondary-glow: rgba(59, 130, 246, 0.2);
+
+  /* Status Tokens */
+  --status-success: #10b981;
+  --status-success-bg: #ecfdf5;
+  --status-success-border: #a7f3d0;
+  --status-warning: #f59e0b;
   --status-warning-bg: #fffbeb;
-  --status-danger: #dc2626;
+  --status-warning-border: #fde68a;
+  --status-danger: #ef4444;
   --status-danger-bg: #fef2f2;
+  --status-danger-border: #fecaca;
   --status-info: #0284c7;
   --status-info-bg: #f0f9ff;
+  --status-info-border: #bae6fd;
 
   /* Border Tokens */
   --border-subtle: rgba(15, 23, 42, 0.08);
   --border-medium: rgba(15, 23, 42, 0.14);
+  --border-strong: rgba(15, 23, 42, 0.22);
   --border-focus: #3b82f6;
 
   /* Multi-Layered Elevation Shadows */
   --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
   --shadow-sm: 0 2px 4px -1px rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 6px 12px -2px rgba(15, 23, 42, 0.08), 0 3px 6px -2px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.10), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 16px -2px rgba(15, 23, 42, 0.08), 0 3px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 16px 32px -4px rgba(15, 23, 42, 0.10), 0 6px 12px -2px rgba(15, 23, 42, 0.04);
+  --shadow-glow: 0 0 20px -3px rgba(37, 99, 235, 0.22);
 
-  /* Animation & Motion Tokens (Emil Kowalski Spec) */
+  /* Animation & Motion Tokens (Emil Kowalski Design Eng Spec) */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
   --duration-tap: 120ms;
   --duration-micro: 180ms;
   --duration-reveal: 240ms;
+
+  /* Dynamic Cursor Spotlight Defaults */
+  --mouse-x: 50%;
+  --mouse-y: 50%;
 }
 
-/* Global Reset & Typography */
+/* --------------------------------------------------------------------------
+   Canvas & Ambient Lighting
+   -------------------------------------------------------------------------- */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--text-primary);
   background-color: var(--bg-canvas);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(30, 64, 175, 0.04) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.04) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(241, 245, 249, 0.6) 0px, transparent 50%);
+  background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.5;
+  letter-spacing: -0.011em;
 }
 
-/* Enforce Tabular Numerics on all metrics, badges, and data tables */
+/* Enforce Tabular Numerals on all metrics, timestamps, and data tables */
 .metric-value,
 .score-val,
 .badge,
@@ -101,11 +120,11 @@ svg,
 .fas,
 .far,
 .btn-icon,
-.quality-score-circle {
+.quality-score-circle,
+.live-indicator-dot {
   flex-shrink: 0 !important;
 }
 
-/* Tables and cards must never allow text blowout */
 .table td,
 .table th {
   max-width: 320px;
@@ -113,37 +132,82 @@ svg,
 }
 
 /* --------------------------------------------------------------------------
-   Top Dashboard Metric KPI Grid
+   Top Dashboard Metric KPI Grid with Stagger & Cursor Spotlight
    -------------------------------------------------------------------------- */
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
   gap: 12px;
 }
 
 .metric-card {
   background: var(--bg-card);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 14px 12px;
   text-align: center;
-  box-shadow: var(--shadow-sm);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.8), var(--shadow-sm);
   transition: transform var(--duration-micro) var(--ease-spring),
               box-shadow var(--duration-micro) var(--ease-spring),
               border-color var(--duration-micro) ease;
   position: relative;
   overflow: hidden;
   min-width: 0;
+  will-change: transform;
+  animation: metricEnter 240ms var(--ease-out) backwards;
 }
 
-.metric-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-medium);
+/* Emil Kowalski Stagger Recipe (30ms incremental waterfall) */
+.metric-card:nth-child(1) { animation-delay: 20ms; }
+.metric-card:nth-child(2) { animation-delay: 50ms; }
+.metric-card:nth-child(3) { animation-delay: 80ms; }
+.metric-card:nth-child(4) { animation-delay: 110ms; }
+.metric-card:nth-child(5) { animation-delay: 140ms; }
+.metric-card:nth-child(6) { animation-delay: 170ms; }
+.metric-card:nth-child(7) { animation-delay: 200ms; }
+.metric-card:nth-child(8) { animation-delay: 230ms; }
+
+@keyframes metricEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Linear-style cursor spotlight effect */
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(180px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(37, 99, 235, 0.08), transparent 70%);
+  opacity: 0;
+  transition: opacity 250ms ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .metric-card:hover::before {
+    opacity: 1;
+  }
+  .metric-card:hover {
+    transform: translateY(-3px) scale(1.005);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.9), var(--shadow-md);
+    border-color: var(--border-medium);
+  }
 }
 
 .metric-card.card-alert {
-  border-color: #fecaca;
+  border-color: var(--status-danger-border);
   background: var(--status-danger-bg);
 }
 
@@ -155,20 +219,24 @@ svg,
   font-size: 0.68rem;
   font-weight: 700;
   color: var(--text-muted);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   margin-bottom: 4px;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  position: relative;
+  z-index: 2;
 }
 
 .metric-value {
-  font-size: 1.45rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  position: relative;
+  z-index: 2;
 }
 
 /* --------------------------------------------------------------------------
@@ -176,61 +244,105 @@ svg,
    -------------------------------------------------------------------------- */
 .panel-box {
   background: var(--bg-card);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 22px;
   margin-bottom: 16px;
-  box-shadow: var(--shadow-sm);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.7), var(--shadow-sm);
   transition: box-shadow var(--duration-micro) var(--ease-spring);
 }
 
 .panel-title {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 12px;
+  letter-spacing: -0.015em;
+  margin-bottom: 14px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-/* Interactive Data Quality Workbench Styles */
+/* --------------------------------------------------------------------------
+   Workbench Header Bar & Glassmorphic Score Card
+   -------------------------------------------------------------------------- */
 .workbench-header-bar {
   border-left: 4px solid var(--brand-primary);
   background: var(--bg-card);
-  border-radius: 10px;
-  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.8), var(--shadow-sm);
+  border-top: 1px solid var(--border-subtle);
+  border-right: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .quality-score-badge {
-  padding: 6px 12px;
+  padding: 6px 14px;
   background: var(--bg-subtle);
   border: 1px solid var(--border-subtle);
-  border-radius: 8px;
+  border-radius: 24px;
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+
+/* Live Status Pulse Dot (Vercel Style) */
+.live-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--status-success);
+  display: inline-block;
+  position: relative;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.live-indicator-dot::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px solid var(--status-success);
+  animation: ping-ring 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  opacity: 0.8;
+  will-change: transform, opacity;
+}
+
+@keyframes ping-ring {
+  75%, 100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
 }
 
 /* --------------------------------------------------------------------------
-   Interactive Issue Cards in Stream
+   Interactive Cards with Hover Lift & Glow
    -------------------------------------------------------------------------- */
 .card {
   transition: transform var(--duration-micro) var(--ease-spring),
               box-shadow var(--duration-micro) var(--ease-spring),
               border-color var(--duration-micro) ease;
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
+  border-radius: 12px;
   background: var(--bg-card);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.7), var(--shadow-xs);
 }
 
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--border-medium);
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.85), var(--shadow-md);
+    border-color: var(--border-medium);
+  }
 }
 
-/* Quality Score Circle */
+/* Circular Health Score Dial */
 .quality-score-circle {
-  width: 108px;
-  height: 108px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   border: 8px solid var(--brand-secondary);
   margin: 0 auto;
@@ -238,53 +350,59 @@ svg,
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-sm);
+  background: var(--bg-card-solid);
+  box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.06), var(--shadow-sm);
+  transition: transform var(--duration-micro) var(--ease-spring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .quality-score-circle:hover {
+    transform: scale(1.03);
+  }
 }
 
 .score-val {
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-size: 2.3rem;
+  font-weight: 900;
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
 }
 
 .score-max {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: var(--text-muted);
-  font-weight: 600;
-}
-
-.quality-status-pill {
-  display: inline-block;
   font-weight: 700;
-  font-size: 0.85rem;
-  padding: 4px 14px;
-  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* --------------------------------------------------------------------------
-   Button Micro-Interactions (Tactile Physical Feedback)
+   Pro-Level Button Micro-Interactions (Emil Kowalski Spring Physics)
    -------------------------------------------------------------------------- */
 .btn {
   position: relative;
-  transition: transform var(--duration-tap) var(--ease-spring),
+  transition: transform var(--duration-tap) var(--ease-bounce),
               background-color var(--duration-micro) ease,
               border-color var(--duration-micro) ease,
-              box-shadow var(--duration-micro) ease;
-  font-weight: 500;
+              box-shadow var(--duration-micro) var(--ease-spring);
+  font-weight: 600;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 8px;
   will-change: transform;
 }
 
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    transform: translateY(-1.5px);
+    box-shadow: var(--shadow-sm);
+  }
 }
 
+/* Tactile press response: subtle scale(0.965) with instant feedback */
 .btn:active {
-  transform: scale(0.97) translateY(0);
+  transform: scale(0.965) translateY(0.5px);
   box-shadow: none !important;
 }
 
@@ -293,70 +411,245 @@ svg,
   outline-offset: 2px;
 }
 
+/* Primary Hero Button Glow */
+.btn-primary {
+  background: linear-gradient(180deg, #2563eb 0%, #1e40af 100%);
+  border: 1px solid #1e40af;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.25), 0 2px 4px rgba(30, 64, 175, 0.2);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.35), var(--shadow-glow);
+}
+
+/* Shimmer Sweep Animation on Hero CTA (1-Click Smart Recipe) */
+.btn-shimmer,
+#mod_workbench-btn_execute_recipe,
+#mod_workbench-btn_smart_recipe_top {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after,
+#mod_workbench-btn_execute_recipe::after,
+#mod_workbench-btn_smart_recipe_top::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent 65%
+  );
+  transform: translateX(-100%);
+  animation: shimmer-sweep 3.5s infinite ease-in-out;
+  pointer-events: none;
+  will-change: transform;
+}
+
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(100%); }
+}
+
 /* --------------------------------------------------------------------------
    Side-by-Side Cell Diff Highlighting (Inspection Modal)
    -------------------------------------------------------------------------- */
 .diff-original {
-  background-color: #fee2e2 !important;
+  background-color: var(--status-danger-bg) !important;
   color: #991b1b !important;
   text-decoration: line-through;
   font-weight: 500;
+  font-family: 'Fira Code', monospace;
+  border-radius: 4px;
 }
 
 .diff-proposed {
-  background-color: #dcfce7 !important;
-  color: #166534 !important;
+  background-color: var(--status-success-bg) !important;
+  color: #065f46 !important;
   font-weight: 700;
+  font-family: 'Fira Code', monospace;
+  border-radius: 4px;
 }
 
 /* --------------------------------------------------------------------------
-   Tabs & Navigation Polish
+   Tabs & Navigation Polish (Elevated Segmented Pills)
    -------------------------------------------------------------------------- */
+.nav-tabs {
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 4px;
+}
+
 .nav-tabs .nav-link {
   font-weight: 600;
+  font-size: 0.88rem;
   color: var(--text-muted);
   border: none;
-  border-bottom: 2px solid transparent;
-  padding: 10px 16px;
-  transition: color var(--duration-micro) ease, border-color var(--duration-micro) ease;
+  border-radius: 8px;
+  padding: 8px 14px;
+  transition: color var(--duration-micro) var(--ease-spring),
+              background-color var(--duration-micro) var(--ease-spring),
+              box-shadow var(--duration-micro) var(--ease-spring);
 }
 
 .nav-tabs .nav-link:hover {
-  color: var(--brand-primary);
-  border-bottom-color: var(--border-subtle);
+  color: var(--text-primary);
+  background: rgba(15, 23, 42, 0.04);
 }
 
 .nav-tabs .nav-link.active {
   color: var(--brand-primary);
-  border-bottom: 2px solid var(--brand-primary);
-  background: transparent;
+  background: var(--bg-card-solid);
+  box-shadow: var(--shadow-sm), inset 0 0 0 1px var(--border-subtle);
 }
 
 /* --------------------------------------------------------------------------
-   DataTables Clean Refinement
+   Modal Entrance & Backdrop Blur (Emil Kowalski Rule: Never scale from 0)
+   -------------------------------------------------------------------------- */
+.modal.fade .modal-dialog {
+  transform: scale(0.96) translateY(8px);
+  opacity: 0;
+  transition: transform 220ms var(--ease-spring), opacity 200ms ease-out;
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.modal-backdrop.fade {
+  opacity: 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(15, 23, 42, 0.45);
+  transition: opacity 200ms ease-out;
+}
+
+.modal-backdrop.show {
+  opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Origin-Aware Dropdown Menus & Popovers
+   -------------------------------------------------------------------------- */
+.dropdown-menu {
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+  transform-origin: top left;
+  animation: dropdownReveal 160ms var(--ease-spring);
+}
+
+@keyframes dropdownReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Smooth Accordion and Collapse Animation */
+.collapse {
+  transition: height 240ms var(--ease-spring);
+}
+
+/* --------------------------------------------------------------------------
+   DataTables Pro-Level Refinement
    -------------------------------------------------------------------------- */
 .dataTables_wrapper {
-  font-size: 0.85rem;
+  font-size: 0.86rem;
+}
+
+table.dataTable {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 table.dataTable thead th {
   background-color: var(--bg-subtle);
   color: var(--text-secondary);
-  font-weight: 600;
-  border-bottom: 2px solid var(--border-subtle);
-  padding: 10px 12px;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 10px 14px;
 }
 
 table.dataTable tbody td {
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-bottom: 1px solid var(--border-subtle);
+  transition: background-color var(--duration-micro) ease;
 }
 
-table.dataTable tbody tr:hover {
-  background-color: var(--bg-canvas) !important;
+table.dataTable tbody tr:hover td {
+  background-color: #f1f5f9 !important;
 }
 
-/* Custom Scrollbars */
+/* --------------------------------------------------------------------------
+   Floating Glass Toast Notifications (Overriding Shiny Defaults)
+   -------------------------------------------------------------------------- */
+#shiny-notification-panel {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shiny-notification {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--brand-primary);
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-weight: 500;
+  font-size: 0.88rem;
+  box-shadow: var(--shadow-lg);
+  animation: toast-slide-in var(--duration-reveal) var(--ease-spring);
+  will-change: transform, opacity;
+}
+
+.shiny-notification-warning {
+  border-left-color: var(--status-warning);
+}
+
+.shiny-notification-error {
+  border-left-color: var(--status-danger);
+}
+
+@keyframes toast-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Custom Ergonomic Scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -369,6 +662,7 @@ table.dataTable tbody tr:hover {
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 4px;
+  transition: background 150ms ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -376,7 +670,7 @@ table.dataTable tbody tr:hover {
 }
 
 /* --------------------------------------------------------------------------
-   Responsive Mobile Media Queries (Break-UI Testing down to 320px)
+   Responsive Mobile Scaling (Break-UI Standards down to 320px)
    -------------------------------------------------------------------------- */
 @media (max-width: 576px) {
   .metrics-grid {
@@ -384,7 +678,7 @@ table.dataTable tbody tr:hover {
     gap: 8px;
   }
   .metric-value {
-    font-size: 1.15rem;
+    font-size: 1.2rem;
   }
   .workbench-header-bar {
     padding: 12px !important;
@@ -405,7 +699,8 @@ table.dataTable tbody tr:hover {
   .metric-card:hover,
   .card:hover,
   .btn:hover,
-  .btn:active {
+  .btn:active,
+  .quality-score-circle:hover {
     transform: none !important;
   }
 }
