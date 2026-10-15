@@ -672,130 +672,337 @@ calculate_quality_indicator <- function(profile, missing_res, dup_res, out_res, 
   ))
 }
 
+# ---- 8b. Type Mismatch & Inconsistency Detection -----------------------------
+
+#' Detect column type candidates (numbers stored as text, dates stored as text, booleans)
+detect_type_mismatches <- function(df) {
+  if (is.null(df) || nrow(df) == 0 || ncol(df) == 0) return(data.frame())
+  mismatch_list <- list()
+  for (cn in names(df)) {
+    v <- df[[cn]]
+    if (is.character(v)) {
+      v_clean <- v[!is.na(v) & trimws(v) != ""]
+      if (length(v_clean) >= 3) {
+        # Check if numeric
+        suppressWarnings({
+          num_conv <- as.numeric(v_clean)
+        })
+        if (all(!is.na(num_conv))) {
+          mismatch_list[[length(mismatch_list) + 1]] <- data.frame(
+            column = cn,
+            current_type = "character",
+            suggested_type = "numeric",
+            reason = "All non-empty character values can be successfully parsed as numbers.",
+            affected_count = length(v_clean),
+            stringsAsFactors = FALSE
+          )
+          next
+        }
+        # Check if date
+        suppressWarnings({
+          d_conv <- as.Date(v_clean, optional = TRUE)
+        })
+        if (all(!is.na(d_conv))) {
+          mismatch_list[[length(mismatch_list) + 1]] <- data.frame(
+            column = cn,
+            current_type = "character",
+            suggested_type = "date",
+            reason = "Values conform to standard ISO date pattern (YYYY-MM-DD).",
+            affected_count = length(v_clean),
+            stringsAsFactors = FALSE
+          )
+          next
+        }
+        # Check if boolean
+        char_lower <- tolower(trimws(v_clean))
+        if (all(char_lower %in% c("true", "false", "t", "f", "1", "0", "yes", "no"))) {
+          mismatch_list[[length(mismatch_list) + 1]] <- data.frame(
+            column = cn,
+            current_type = "character",
+            suggested_type = "logical",
+            reason = "Binary text labels can be standardized to boolean TRUE/FALSE.",
+            affected_count = length(v_clean),
+            stringsAsFactors = FALSE
+          )
+        }
+      }
+    }
+  }
+  if (length(mismatch_list) > 0) do.call(rbind, mismatch_list) else data.frame()
+}
+
+#' Detect category inconsistencies (whitespace, casing variations, rare categories)
+detect_category_inconsistencies <- function(df) {
+  if (is.null(df) || nrow(df) == 0 || ncol(df) == 0) return(data.frame())
+  incons_list <- list()
+  for (cn in names(df)) {
+    v <- df[[cn]]
+    if (is.character(v) || is.factor(v)) {
+      char_v <- as.character(v)
+      non_na <- char_v[!is.na(char_v) & trimws(char_v) != ""]
+      if (length(non_na) >= 3) {
+        # Check whitespace
+        n_ws <- sum(trimws(non_na) != non_na)
+        if (n_ws > 0) {
+          incons_list[[length(incons_list) + 1]] <- data.frame(
+            column = cn,
+            issue_type = "Whitespace Padding",
+            detail = paste0(n_ws, " value(s) have leading or trailing spaces."),
+            affected_count = n_ws,
+            stringsAsFactors = FALSE
+          )
+        }
+        # Check casing variation (e.g., Chennai vs chennai vs CHENNAI)
+        u_raw <- unique(non_na)
+        u_lower <- unique(tolower(non_na))
+        if (length(u_raw) > length(u_lower)) {
+          casing_dups <- length(u_raw) - length(u_lower)
+          incons_list[[length(incons_list) + 1]] <- data.frame(
+            column = cn,
+            issue_type = "Inconsistent Casing",
+            detail = paste0(casing_dups, " category label(s) differ only by uppercase/lowercase letters."),
+            affected_count = casing_dups,
+            stringsAsFactors = FALSE
+          )
+        }
+      }
+    }
+  }
+  if (length(incons_list) > 0) do.call(rbind, incons_list) else data.frame()
+}
+
 # ---- 9. Unified Finding Engine ----------------------------------------------
 
-#' Generate unified findings dossier (category, severity, column, message, evidence, recommendation)
-generate_findings <- function(profile, missing_res, dup_res, out_res, const_df, corr_res, leak_res, bias_res) {
+#' Generate unified findings dossier (category, severity, column, message, evidence, recommendation, fixes)
+generate_findings <- function(profile, missing_res, dup_res, out_res, const_df, corr_res, leak_res, bias_res, df = NULL) {
   f_list <- list()
 
-  add_f <- function(category, severity, column, message, evidence, recommendation) {
+  add_f <- function(issue_id, category, severity, column, message, evidence, recommendation,
+                     fix_category = "none", supported_fixes = "", recommended_fix = "",
+                     affected_count = 0, affected_pct = 0) {
     f_list[[length(f_list) + 1]] <<- list(
+      issue_id = issue_id,
       category = category,
       severity = toupper(severity),
       column = column,
       message = message,
       evidence = evidence,
-      recommendation = recommendation
+      recommendation = recommendation,
+      fix_category = fix_category,
+      supported_fixes = supported_fixes,
+      recommended_fix = recommended_fix,
+      affected_count = as.integer(affected_count),
+      affected_pct = round(as.numeric(affected_pct), 2)
     )
   }
 
-  # Missing values
+  # 1. Missing values
   if (nrow(missing_res$column_summary) > 0) {
     for (i in seq_len(nrow(missing_res$column_summary))) {
       r <- missing_res$column_summary[i, ]
       if (r$missing_count > 0) {
         sev <- if (r$missing_pct > 50) "HIGH" else if (r$missing_pct > 20) "HIGH" else if (r$missing_pct > 5) "MEDIUM" else "LOW"
+        is_num <- FALSE
+        if (!is.null(profile$columns_summary) && nrow(profile$columns_summary) > 0) {
+          matched <- profile$columns_summary[profile$columns_summary$column == r$column, ]
+          if (nrow(matched) > 0) is_num <- matched$data_type[1] %in% c("numeric", "integer")
+        }
+        supp_f <- if (is_num) "median|mean|mode|remove_rows|indicator_col|custom|forward_fill|backward_fill" else "mode|remove_rows|indicator_col|custom|forward_fill|backward_fill"
+        rec_f <- if (is_num) "median" else "mode"
+        
         add_f(
+          issue_id = paste0("miss_", r$column),
           category = "Missing Values",
           severity = sev,
           column = r$column,
           message = paste0("Column '", r$column, "' contains ", r$missing_pct, "% missing values."),
           evidence = paste0(format_number(r$missing_count), " of ", format_number(profile$n_rows), " rows missing."),
-          recommendation = "Investigate the missingness mechanism before modeling."
+          recommendation = "Review missingness mechanism; apply median, mode, or indicator imputation.",
+          fix_category = "missing",
+          supported_fixes = supp_f,
+          recommended_fix = rec_f,
+          affected_count = r$missing_count,
+          affected_pct = r$missing_pct
         )
       }
     }
   }
 
-  # Duplicates
+  # 2. Duplicates
   if (dup_res$duplicate_rows_count > 0) {
     sev <- if (dup_res$duplicate_pct >= 5) "HIGH" else if (dup_res$duplicate_pct >= 1) "MEDIUM" else "LOW"
     add_f(
+      issue_id = "dup_exact",
       category = "Duplicate Records",
       severity = sev,
       column = "All Columns",
       message = paste0(dup_res$duplicate_pct, "% of rows are exact duplicate copies."),
       evidence = paste0(format_number(dup_res$duplicate_rows_count), " duplicate records detected."),
-      recommendation = "Inspect duplicate rows to determine if they stem from logging redundancy."
+      recommendation = "Deduplicate records keeping first, last, or instance with fewest missing values.",
+      fix_category = "duplicate",
+      supported_fixes = "first|last|fewest_na",
+      recommended_fix = "first",
+      affected_count = dup_res$duplicate_rows_count,
+      affected_pct = dup_res$duplicate_pct
     )
   }
 
-  # Constants
+  # 3. Constants
   if (nrow(const_df) > 0) {
     for (i in seq_len(nrow(const_df))) {
       r <- const_df[i, ]
       sev <- if (r$issue_type == "Strictly Constant") "HIGH" else "MEDIUM"
       add_f(
+        issue_id = paste0("const_", r$column),
         category = "Uninformative Variables",
         severity = sev,
         column = r$column,
         message = r$finding,
         evidence = paste0(r$issue_type, ": Dominant value represents ", r$dominant_pct, "%."),
-        recommendation = "Consider excluding uninformative features from predictive models."
+        recommendation = "Consider excluding uninformative features from predictive models.",
+        fix_category = "constant",
+        supported_fixes = "exclude_column",
+        recommended_fix = "exclude_column",
+        affected_count = profile$n_rows,
+        affected_pct = 100
       )
     }
   }
 
-  # Outliers
+  # 4. Outliers
   if (out_res$has_numeric && nrow(out_res$summary) > 0) {
     for (i in seq_len(nrow(out_res$summary))) {
       r <- out_res$summary[i, ]
       if (r$outlier_count > 0) {
         sev <- if (r$outlier_pct >= 10) "MEDIUM" else "LOW"
         add_f(
+          issue_id = paste0("out_", r$column),
           category = "Outliers",
           severity = sev,
           column = r$column,
           message = paste0(r$outlier_pct, "% statistically unusual observations detected (beyond 1.5 \u00d7 IQR)."),
           evidence = paste0(format_number(r$outlier_count), " observations lie outside bounds [", r$lower_bound, ", ", r$upper_bound, "]."),
-          recommendation = "Inspect flagged records to verify data entry accuracy."
+          recommendation = "Inspect extreme observations. Consider Winsorizing/capping or median substitution.",
+          fix_category = "outlier",
+          supported_fixes = "cap_bounds|replace_median|remove_rows",
+          recommended_fix = "cap_bounds",
+          affected_count = r$outlier_count,
+          affected_pct = r$outlier_pct
         )
       }
     }
   }
 
-  # Multicollinearity
+  # 5. Type Mismatches (if df provided)
+  if (!is.null(df) && is.data.frame(df)) {
+    types_df <- tryCatch(detect_type_mismatches(df), error = function(e) data.frame())
+    if (nrow(types_df) > 0) {
+      for (i in seq_len(nrow(types_df))) {
+        r <- types_df[i, ]
+        pct_aff <- if (profile$n_rows > 0) (r$affected_count / profile$n_rows) * 100 else 0
+        add_f(
+          issue_id = paste0("type_", r$column),
+          category = "Type Mismatch",
+          severity = "MEDIUM",
+          column = r$column,
+          message = paste0("Column '", r$column, "' is stored as character but appears to represent ", r$suggested_type, " data."),
+          evidence = r$reason,
+          recommendation = paste0("Convert column '", r$column, "' to ", r$suggested_type, "."),
+          fix_category = "type",
+          supported_fixes = r$suggested_type,
+          recommended_fix = r$suggested_type,
+          affected_count = r$affected_count,
+          affected_pct = pct_aff
+        )
+      }
+    }
+
+    # 6. Category Inconsistencies
+    cats_df <- tryCatch(detect_category_inconsistencies(df), error = function(e) data.frame())
+    if (nrow(cats_df) > 0) {
+      for (i in seq_len(nrow(cats_df))) {
+        r <- cats_df[i, ]
+        pct_aff <- if (profile$n_rows > 0) (r$affected_count / profile$n_rows) * 100 else 0
+        rec_act <- if (r$issue_type == "Whitespace Padding") "trim_whitespace" else "case_title"
+        supp_act <- if (r$issue_type == "Whitespace Padding") "trim_whitespace" else "case_title|case_lower|case_upper"
+        add_f(
+          issue_id = paste0("cat_", r$column, "_", tolower(substr(r$issue_type, 1, 4))),
+          category = "Inconsistent Categories",
+          severity = "LOW",
+          column = r$column,
+          message = paste0("Column '", r$column, "' exhibits ", tolower(r$issue_type), "."),
+          evidence = r$detail,
+          recommendation = paste0("Standardize formatting via ", rec_act, "."),
+          fix_category = "category",
+          supported_fixes = supp_act,
+          recommended_fix = rec_act,
+          affected_count = r$affected_count,
+          affected_pct = pct_aff
+        )
+      }
+    }
+  }
+
+  # 7. Multicollinearity
   if (corr_res$has_correlations && nrow(corr_res$multicollinear_pairs) > 0) {
     for (i in seq_len(nrow(corr_res$multicollinear_pairs))) {
       r <- corr_res$multicollinear_pairs[i, ]
       sev <- if (r$is_very_strong) "HIGH" else "MEDIUM"
       add_f(
+        issue_id = paste0("corr_", r$variable_a, "_", r$variable_b),
         category = "Correlations",
         severity = sev,
         column = paste0(r$variable_a, " & ", r$variable_b),
         message = paste0(r$strength, " (r = ", r$correlation, ")."),
         evidence = paste0("Pearson correlation coefficient is ", r$correlation),
-        recommendation = "Assess linear redundancy before training regression models."
+        recommendation = "Assess linear redundancy before training regression models.",
+        fix_category = "none",
+        supported_fixes = "",
+        recommended_fix = "",
+        affected_count = 0,
+        affected_pct = 0
       )
     }
   }
 
-  # Leakage
+  # 8. Leakage
   if (!is.null(leak_res) && leak_res$target_specified && nrow(leak_res$indicators) > 0) {
     for (i in seq_len(nrow(leak_res$indicators))) {
       r <- leak_res$indicators[i, ]
       add_f(
+        issue_id = paste0("leak_", r$column),
         category = "Leakage Indicators",
         severity = r$severity,
         column = r$column,
         message = r$reason,
         evidence = r$evidence,
-        recommendation = "Verify if this feature is recorded post-event relative to the target."
+        recommendation = "Verify if this feature is recorded post-event relative to the target.",
+        fix_category = "none",
+        supported_fixes = "",
+        recommended_fix = "",
+        affected_count = 0,
+        affected_pct = 0
       )
     }
   }
 
-  # Bias
+  # 9. Bias
   if (!is.null(bias_res) && bias_res$has_indicators && nrow(bias_res$indicators) > 0) {
     for (i in seq_len(nrow(bias_res$indicators))) {
       r <- bias_res$indicators[i, ]
       add_f(
+        issue_id = paste0("bias_", r$column),
         category = "Bias Indicators",
         severity = r$severity,
         column = r$column,
         message = r$reason,
         evidence = r$evidence,
-        recommendation = "Verify whether representation coverage aligns with intended domain scope."
+        recommendation = "Verify whether representation coverage aligns with intended domain scope.",
+        fix_category = "none",
+        supported_fixes = "",
+        recommended_fix = "",
+        affected_count = 0,
+        affected_pct = 0
       )
     }
   }
@@ -804,9 +1011,13 @@ generate_findings <- function(profile, missing_res, dup_res, out_res, const_df, 
     do.call(rbind, lapply(f_list, as.data.frame, stringsAsFactors = FALSE))
   } else {
     data.frame(
+      issue_id = character(0),
       category = character(0), severity = character(0),
       column = character(0), message = character(0),
       evidence = character(0), recommendation = character(0),
+      fix_category = character(0), supported_fixes = character(0),
+      recommended_fix = character(0), affected_count = integer(0),
+      affected_pct = numeric(0),
       stringsAsFactors = FALSE
     )
   }
@@ -819,4 +1030,74 @@ profile_dataset <- inspect_dataset
 analyze_missing <- detect_missing
 analyze_duplicates <- detect_duplicates
 analyze_constants <- detect_constant_columns
+
+# ---- 10. Multi-Dimensional Data Usefulness & Health Radar --------------------
+
+#' Calculate 5-dimensional data usefulness scores (Completeness, Uniqueness, Validity, Stability, Feature Readiness)
+#' @param df Data frame to evaluate
+#' @return List with scores vector (0-100), overall_index, status, status_color
+calculate_data_usefulness_radar <- function(df) {
+  if (is.null(df) || nrow(df) == 0 || ncol(df) == 0) {
+    return(list(
+      scores = c(Completeness = 0, Uniqueness = 0, Validity = 0, Stability = 0, Feature_Readiness = 0),
+      overall_index = 0,
+      status = "Empty",
+      status_color = "#94a3b8"
+    ))
+  }
+
+  n_rows <- nrow(df)
+  n_cols <- ncol(df)
+  tot_cells <- n_rows * n_cols
+
+  # 1. Completeness Score (0-100)
+  n_miss_cells <- sum(vapply(df, function(c) {
+    if (is.character(c)) sum(is.na(c) | trimws(c) == "") else sum(is.na(c))
+  }, integer(1)))
+  completeness <- max(0, min(100, round((1 - (n_miss_cells / tot_cells)) * 100, 1)))
+
+  # 2. Uniqueness Score (0-100)
+  n_dups <- sum(duplicated(df))
+  uniqueness <- max(0, min(100, round((1 - (n_dups / n_rows)) * 100, 1)))
+
+  # 3. Validity & Formatting Score (0-100)
+  incons <- tryCatch(detect_category_inconsistencies(df), error = function(e) data.frame())
+  types_m <- tryCatch(detect_type_mismatches(df), error = function(e) data.frame())
+  format_deduction <- min(40, (nrow(incons) * 8) + (nrow(types_m) * 10))
+  validity <- max(0, min(100, 100 - format_deduction))
+
+  # 4. Distributional Stability (0-100)
+  out_res <- tryCatch(detect_outliers(df), error = function(e) list(has_numeric = FALSE))
+  out_cols <- if (isTRUE(out_res$has_numeric) && nrow(out_res$summary) > 0) sum(out_res$summary$outlier_count > 0) else 0
+  const_df <- tryCatch(detect_constant_columns(df), error = function(e) data.frame())
+  stab_deduction <- min(50, (out_cols * 10) + (nrow(const_df) * 15))
+  stability <- max(0, min(100, 100 - stab_deduction))
+
+  # 5. Feature & Predictive Readiness (0-100)
+  # Rewarded for rich numeric variance, derived features, and lack of constant features
+  n_num <- sum(vapply(df, is.numeric, logical(1)))
+  num_ratio <- if (n_cols > 0) n_num / n_cols else 0
+  readiness_base <- if (n_cols >= 5 && num_ratio >= 0.4 && nrow(const_df) == 0) 95 else if (n_cols >= 3) 80 else 60
+  readiness <- max(0, min(100, readiness_base - (nrow(const_df) * 20)))
+
+  scores_vec <- c(
+    Completeness = completeness,
+    Uniqueness = uniqueness,
+    Validity = validity,
+    Stability = stability,
+    Feature_Readiness = readiness
+  )
+
+  overall_idx <- round(mean(scores_vec), 1)
+  status <- if (overall_idx >= 90) "Production Ready" else if (overall_idx >= 75) "Highly Useful" else if (overall_idx >= 50) "Partially Cleaned" else "Raw & Messy"
+  status_color <- if (overall_idx >= 90) "#16a34a" else if (overall_idx >= 75) "#2563eb" else if (overall_idx >= 50) "#d97706" else "#dc2626"
+
+  list(
+    scores = scores_vec,
+    overall_index = overall_idx,
+    status = status,
+    status_color = status_color
+  )
+}
+
 

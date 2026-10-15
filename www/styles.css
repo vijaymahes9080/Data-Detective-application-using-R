@@ -1,24 +1,120 @@
 /* ==============================================================================
-   DATA DETECTIVE: Clean Modern Data Science UI Styles
-   Compatible with bslib and Shinylive WebAssembly
+   DATA DETECTIVE PRO: High-Craft Design System & Interaction Stylesheet
+   Crafted with:
+   - Emil Kowalski's Animation Principles (Natural cubic-bezier, Tactile Feedback)
+   - Break-UI Defensive Standards (min-width: 0, flex-shrink: 0, overflow-wrap)
+   - Anti-Slop Intentional Visual Direction (High-contrast, Curated Tokens)
+   - Data-Dense Dashboard Intelligence & Tabular Numerics
+   Compatible with bslib (Bootstrap 5) & WebAssembly/Shinylive
    ============================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap');
 
 :root {
-  --primary-color: #2563eb;
-  --text-dark: #0f172a;
+  /* Surface Tokens */
+  --bg-canvas: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --bg-inset: #e2e8f0;
+
+  /* Typography Tokens */
+  --text-primary: #0f172a;
+  --text-secondary: #334155;
   --text-muted: #64748b;
-  --border-color: #e2e8f0;
+  --text-faint: #94a3b8;
+
+  /* Brand & Semantic Tokens */
+  --brand-primary: #1e40af;
+  --brand-primary-hover: #1d4ed8;
+  --brand-primary-subtle: #eff6ff;
+  --brand-secondary: #3b82f6;
+  --accent-cta: #d97706;
+  --accent-cta-hover: #b45309;
+  
+  --status-success: #16a34a;
+  --status-success-bg: #f0fdf4;
+  --status-warning: #d97706;
+  --status-warning-bg: #fffbeb;
+  --status-danger: #dc2626;
+  --status-danger-bg: #fef2f2;
+  --status-info: #0284c7;
+  --status-info-bg: #f0f9ff;
+
+  /* Border Tokens */
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-medium: rgba(15, 23, 42, 0.14);
+  --border-focus: #3b82f6;
+
+  /* Multi-Layered Elevation Shadows */
+  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 2px 4px -1px rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 6px 12px -2px rgba(15, 23, 42, 0.08), 0 3px 6px -2px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.10), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+
+  /* Animation & Motion Tokens (Emil Kowalski Spec) */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --duration-tap: 120ms;
+  --duration-micro: 180ms;
+  --duration-reveal: 240ms;
 }
 
+/* Global Reset & Typography */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  color: var(--text-dark);
-  background-color: #f8fafc;
+  color: var(--text-primary);
+  background-color: var(--bg-canvas);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
-/* Metric KPI Cards Grid */
+/* Enforce Tabular Numerics on all metrics, badges, and data tables */
+.metric-value,
+.score-val,
+.badge,
+.table td,
+.dataTables_info,
+.tabular-numbers,
+code,
+pre {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* --------------------------------------------------------------------------
+   Break-UI Defensive Rules (Resilience against worst-case data & clipping)
+   -------------------------------------------------------------------------- */
+.min-w-0 {
+  min-width: 0 !important;
+}
+
+.text-break-anywhere {
+  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+}
+
+/* Icons, avatars, and badges must never shrink into pills or squish */
+i,
+svg,
+.fa,
+.fas,
+.far,
+.btn-icon,
+.quality-score-circle {
+  flex-shrink: 0 !important;
+}
+
+/* Tables and cards must never allow text blowout */
+.table td,
+.table th {
+  max-width: 320px;
+  overflow-wrap: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   Top Dashboard Metric KPI Grid
+   -------------------------------------------------------------------------- */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -26,78 +122,131 @@ body {
 }
 
 .metric-card {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 12px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 14px 12px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-  transition: transform 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-micro) var(--ease-spring),
+              box-shadow var(--duration-micro) var(--ease-spring),
+              border-color var(--duration-micro) ease;
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-medium);
 }
 
 .metric-card.card-alert {
-  border-color: #fca5a5;
-  background: #fff5f5;
+  border-color: #fecaca;
+  background: var(--status-danger-bg);
+}
+
+.metric-card.card-alert .metric-value {
+  color: var(--status-danger);
 }
 
 .metric-title {
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   font-weight: 700;
   color: var(--text-muted);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   margin-bottom: 4px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .metric-value {
-  font-size: 1.35rem;
+  font-size: 1.45rem;
   font-weight: 800;
-  color: var(--text-dark);
+  color: var(--text-primary);
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.card-alert .metric-value {
-  color: #dc2626;
-}
-
-/* Panel Containers */
+/* --------------------------------------------------------------------------
+   Panel Containers & Surface Polish
+   -------------------------------------------------------------------------- */
 .panel-box {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 20px;
   margin-bottom: 16px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--duration-micro) var(--ease-spring);
 }
 
 .panel-title {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
   margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Interactive Data Quality Workbench Styles */
+.workbench-header-bar {
+  border-left: 4px solid var(--brand-primary);
+  background: var(--bg-card);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.quality-score-badge {
+  padding: 6px 12px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   Interactive Issue Cards in Stream
+   -------------------------------------------------------------------------- */
+.card {
+  transition: transform var(--duration-micro) var(--ease-spring),
+              box-shadow var(--duration-micro) var(--ease-spring),
+              border-color var(--duration-micro) ease;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-card);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-medium);
 }
 
 /* Quality Score Circle */
 .quality-score-circle {
-  width: 105px;
-  height: 105px;
+  width: 108px;
+  height: 108px;
   border-radius: 50%;
-  border: 7px solid #3b82f6;
+  border: 8px solid var(--brand-secondary);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
 }
 
 .score-val {
-  font-size: 2.1rem;
+  font-size: 2.2rem;
   font-weight: 800;
   line-height: 1;
+  letter-spacing: -0.03em;
 }
 
 .score-max {
@@ -114,17 +263,149 @@ body {
   border-radius: 20px;
 }
 
-/* Compact Metrics Grid in Distributions */
-.metrics-compact-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+/* --------------------------------------------------------------------------
+   Button Micro-Interactions (Tactile Physical Feedback)
+   -------------------------------------------------------------------------- */
+.btn {
+  position: relative;
+  transition: transform var(--duration-tap) var(--ease-spring),
+              background-color var(--duration-micro) ease,
+              border-color var(--duration-micro) ease,
+              box-shadow var(--duration-micro) ease;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  will-change: transform;
 }
 
-.compact-cell {
-  background: #f8fafc;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 8px 10px;
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn:active {
+  transform: scale(0.97) translateY(0);
+  box-shadow: none !important;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Side-by-Side Cell Diff Highlighting (Inspection Modal)
+   -------------------------------------------------------------------------- */
+.diff-original {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.diff-proposed {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Tabs & Navigation Polish
+   -------------------------------------------------------------------------- */
+.nav-tabs .nav-link {
+  font-weight: 600;
+  color: var(--text-muted);
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 10px 16px;
+  transition: color var(--duration-micro) ease, border-color var(--duration-micro) ease;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--brand-primary);
+  border-bottom-color: var(--border-subtle);
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--brand-primary);
+  border-bottom: 2px solid var(--brand-primary);
+  background: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   DataTables Clean Refinement
+   -------------------------------------------------------------------------- */
+.dataTables_wrapper {
   font-size: 0.85rem;
+}
+
+table.dataTable thead th {
+  background-color: var(--bg-subtle);
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-subtle);
+  padding: 10px 12px;
+}
+
+table.dataTable tbody td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+table.dataTable tbody tr:hover {
+  background-color: var(--bg-canvas) !important;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Mobile Media Queries (Break-UI Testing down to 320px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 576px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .metric-value {
+    font-size: 1.15rem;
+  }
+  .workbench-header-bar {
+    padding: 12px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Accessibility Mandate: Reduced Motion Support
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .metric-card:hover,
+  .card:hover,
+  .btn:hover,
+  .btn:active {
+    transform: none !important;
+  }
 }

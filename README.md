@@ -1,82 +1,94 @@
-# Data Detective
-> **Automated Dataset Investigation & Data Quality Intelligence**  
-> *"Upload. Investigate. Understand."*
+# Data Detective Pro
+> **Autonomous "Raw Data to Useful Data" Intelligence & Feature Engineering Platform**  
+> *"Transform Raw Data into Useful Intelligence — Deterministic, Reversible, & 100% In-Browser."*
 
 ![R](https://img.shields.io/badge/Language-R%20%3E%3D%204.0-blue.svg)
 ![Shiny](https://img.shields.io/badge/Framework-Shiny-brightgreen.svg)
 ![Shinylive](https://img.shields.io/badge/WebAssembly-Shinylive-orange.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
-![DataQuality](https://img.shields.io/badge/System-Statistical%20Investigation-purple.svg)
+![Quality](https://img.shields.io/badge/System-Raw%20to%20Useful%20Intelligence-purple.svg)
 
 ---
 
 ## Overview
 
-Data practitioners spend up to 80% of their analysis time manually auditing datasets for quality anomalies, structural defects, missingness mechanisms, and statistical quirks.
+In real-world data science, **raw data is never useful data by default**. It is rife with cryptic column names, unstandardized currency strings, silent duplicate rows, missing values, extreme outlier leverage, and unextracted temporal timestamps.
 
-**Data Detective** is a modular, professional R + Shiny web application designed for automated dataset investigation. Users upload any tabular dataset (CSV, TSV, TXT, or RDS), and the platform systematically evaluates:
-- Dataset structure and memory footprint
-- Transparent data-quality scoring with granular deductions
-- Missing value mechanisms and row/column diagnostics
-- Exact and candidate duplicate records
-- Outliers using Tukey's $1.5 \times \text{IQR}$ bounds and standardized scores
-- Numerical distributions, sample skewness, and factual observations
-- Categorical frequency distributions and category concentration
-- Pearson and Spearman correlation matrices with multicollinearity alerts ($|r| \ge 0.70$)
-- Bivariate relationship exploration with auto-selected visualizations
-- Potential data leakage indicators (name resemblance, near-identity, extreme association)
-- Potential representation disparities across demographic or transactional cohorts
-- Structured, categorized investigation findings dossier
-- Self-contained, publication-ready **Dataset Investigation Report** download
+**Data Detective Pro** transforms raw tabular files (CSV, TSV, TXT, or RDS) into **high-value, enriched, feature-engineered, modeling-ready data products**. Built completely with pure Base R and Shiny, fully compatible with **Shinylive** (executing locally via client-side WebAssembly with zero data egress), it delivers:
 
-> **Important System Notice:**  
-> Data Detective is a **deterministic, rule-based statistical investigation platform**. It is **NOT** an AI chatbot and does **NOT** rely on external AI or cloud APIs. Every metric, chart, finding, and recommendation is computed dynamically from the active dataset.
+1. **Autonomous 1-Click "Raw-to-Useful" Recipe Generator**: Scans dataset defects and synthesizes an ordered, multi-step pipeline (deduplication, column name sanitization, type casting, median/mode imputation, Tukey outlier Winsorization, date extraction, and log transforms).
+2. **Interactive Data Quality Fixing Workbench**: Inspect proposed changes in side-by-side cell-level diffs, apply individual or composite fixes, and rollback anytime with an audit timeline.
+3. **Feature Engineering & Enrichment Studio**: Derive temporal dates, cyclical sine/cosine seasonality coordinates, log1p variance stabilizers, Z-score/Min-Max scaling, business ratios ($A/B$), quantile tier binning, text metadata, and one-hot binary indicator dummies.
+4. **Column Studio**: Univariate statistical deep dive featuring histograms, boxplots, violin plots, empirical cumulative distributions (ECDF), QQ-plots, quantile tables, and plain-language statistical interpretations.
+5. **"Ask Data Detective" Conversational Intelligence Engine**: Deterministic in-browser question answering for key drivers, anomaly hunting, missingness hotspots, and executive dataset summaries.
+6. **5-Dimensional Data Usefulness Radar**: Tracks Completeness, Uniqueness, Validity, Distributional Stability, and Modeling Readiness ($0-100$).
+7. **Production Deliverables Ecosystem**: Export cleaned & enriched CSV/RDS datasets, plus a **standalone reproducible Base R script (`pipeline.R`)** to rerun the entire pipeline in any headless environment or CI/CD workflow.
 
 ---
 
-## Features
+## The 6 Architectural Pillars
 
-- **100% Client/Local Processing:** Compatible with **Shinylive** (R in WebAssembly) for serverless in-browser execution with zero data egress.
-- **Automated Data Profiling:** Instant computation of variable types, memory footprint, completeness, and central tendencies.
-- **Transparent Quality Scoring:** Rule-based composite score ($0-100$) showing exact point deductions for missingness, duplicate rows, outlier presence, and uninformative variables.
-- **Statistical Anomaly Diagnostics:** Rigorous Tukey $1.5 \times \text{IQR}$ bounds without mislabeling natural heavy tails as "wrong values".
-- **Relational & Multicollinearity Screening:** Interactive correlation heatmap and automated alerts for highly collinear feature pairs ($|r| \ge 0.70$).
-- **Relationship Explorer:** Automatic chart selection based on variable pairings (Scatter plot for Numeric vs Numeric, Boxplot for Categorical vs Numeric, Grouped Bar for Categorical vs Categorical, and Line Chart for Date vs Numeric).
-- **Leakage & Representation Screening:** Detects post-target naming cues, near-identity duplication, and differential missingness across groups.
-- **Investigation Center Dossier:** Structured cards (High, Medium, Low, Info) detailing *What*, *Evidence*, *Why Investigate*, and *Recommended Action*.
-- **Multi-Format Export:** Instant download of self-contained HTML reports (offline-ready) and structured audit CSVs.
+```mermaid
+graph TD
+    A[Raw Unstructured / Messy Tabular Data] --> B[Pillar 1: Semantic Ingestion & Lexical Standardizer]
+    
+    subgraph "Core Intelligence Engines"
+        B --> C[Pillar 2: 5-Dimensional Data Usefulness Radar]
+        C --> D[Pillar 3: Autonomous 1-Click 'Raw-to-Useful' Recipe Synthesizer]
+    end
+    
+    subgraph "Interactive Fixing & Creative Enrichment"
+        D --> E[Pillar 4: Feature Engineering & Enrichment Studio]
+        E --> F[Granular Quality Fixing Centers: Impute, Dedupe, Winsorize, Cast, Sanitize]
+        F --> G[Pillar 5: 'Ask Data Detective' Conversational NLP Engine]
+    end
+    
+    subgraph "Pillar 6: End-to-End Production Deliverables"
+        G --> H[Production Cleaned & Enriched CSV / RDS]
+        G --> I[Reproducible Standalone Base R Pipeline Script pipeline.R]
+        G --> J[Executive Data Story Dossier & Intelligence Report]
+        G --> K[Non-Destructive Versioned State DAG with 1-Click Rollback]
+    end
+```
 
 ---
 
-## Architecture
+## Core Capabilities
 
-Data Detective enforces strict separation of concerns across ingestion, validation, analytical computation, and UI presentation modules:
+### 1. Autonomous One-Click Smart Recipe
+Data Detective Pro inspects your dataset and synthesizes an ordered recipe tailored to your exact data profile:
+- **Header Normalization**: Sanitizes messy headers (`" Annual Income ($)"` $\to$ `annual_income_usd`).
+- **Exact Deduplication**: Drops redundant copies, preserving authentic sample weights.
+- **Currency & Percentage Parsing**: Strips `$`, `€`, `£`, `%` and commas, converting text to continuous floats.
+- **Statistical Imputation**: Fills missing numbers with medians and categories with modes.
+- **Tukey Outlier Winsorization**: Clamps extreme outliers to $[Q_1 - 1.5\text{IQR}, Q_3 + 1.5\text{IQR}]$ bounds to preserve rows without distorting variance.
+- **Feature Enrichment**: Automatically extracts temporal calendar features and applies $\log(1+x)$ transforms to heavily skewed columns ($skew > 1.5$).
 
-```
-DATA INPUT (CSV/RDS) ──► DATA VALIDATION & DELIMITER DETECTION
-                                  │
-                                  ▼
-                        PROFILING & TYPE INFERENCE
-                                  │
-                                  ▼
-      ┌─────────────────────────────────────────────────────────┐
-      │               CENTRAL ANALYTICAL ENGINES                │
-      │  Missingness │ Duplicates │ Outliers │ Correlations    │
-      │  Constants   │ Leakage    │ Bias     │ Relationships   │
-      └─────────────────────────────────────────────────────────┘
-                                  │
-                                  ▼
-                  TRANSPARENT QUALITY SCORING ENGINE
-                                  │
-                                  ▼
-                    UNIFIED FINDINGS RULES ENGINE
-                                  │
-                                  ▼
-                   MODULAR SHINY PRESENTATION TABS
-                                  │
-                                  ▼
-              OFFLINE HTML DOSSIER & CSV REPORT EXPORT
-```
+### 2. Feature Engineering & Enrichment Studio
+- **Temporal Features**: `_year`, `_month`, `_quarter`, `_day`, `_day_of_week`, `_is_weekend`.
+- **Cyclical Trigonometric Encodings**: $\sin(2\pi m / 12)$ and $\cos(2\pi m / 12)$ for periodic seasonality.
+- **Variance-Stabilizing Transforms**: $\log(1+x)$ with negative-offset handling.
+- **Standardization & Scaling**: Z-score ($z = \frac{x-\mu}{\sigma}$), Min-Max $[0, 1]$, and Robust Median/IQR.
+- **Business Ratios**: Custom ratios ($Col_A / Col_B$) with division-by-zero safeguards.
+- **Quantile Binning**: Balanced quartiles/quintiles with business labels (`Low (Q1)`, `Moderate (Q2)`, `High (Q3)`, `Top Tier (Q4)`).
+- **One-Hot Dummy Indicators**: Binary $0/1$ flags for dominant category classes.
+- **Text Metadata**: Character length and word count feature extraction.
+
+### 3. Column Studio (Univariate Drilldown)
+- Dynamic plot selection: Histogram, Boxplot, Violin, ECDF, QQ-Plot.
+- Complete 5-number summary: Min, $Q_1$, Median, Mean, $Q_3$, Max, IQR, Skewness, Kurtosis.
+- Plain-English distribution interpretation: Explains skewness direction, modality, and spread facts.
+
+### 4. "Ask Data Detective" Conversational Intelligence
+- Plain-language deterministic inquiry:
+  - *"What are the key drivers?"* $\to$ Top correlated pairs, multicollinear predictors ($|r| \ge 0.70$).
+  - *"Identify extreme outliers"* $\to$ Tukey boundary violations and leverage points.
+  - *"Executive summary"* $\to$ Complete narrative dataset dossier with volume, health score, and readiness.
+- Instant clickable prompt chips for rapid discovery.
+
+### 5. Reproducible Base R Pipeline Script
+- Download a standalone `.R` script that replicates every cleaning and feature engineering step performed in the UI using pure Base R.
+- Zero dependencies on Shiny for execution — run it headlessly in terminal, Docker, Airflow, or GitHub Actions!
 
 ---
 
@@ -84,49 +96,60 @@ DATA INPUT (CSV/RDS) ──► DATA VALIDATION & DELIMITER DETECTION
 
 - **Primary Language:** R ($\ge 4.0.0$)
 - **Framework:** Shiny
-- **UI Architecture:** `bslib` (Modern Bootstrap 5 theme with responsive sidebar)
-- **Data Wrangling:** Base R, `utils`, `stats`, `tools` (prioritized for WebAssembly/Shinylive stability)
+- **UI Architecture:** `bslib` (Bootstrap 5 theme with responsive sidebar and Data-Dense CSS tokens)
+- **Data Wrangling:** Pure Base R (`utils`, `stats`, `tools`) for bulletproof WebAssembly/Shinylive compatibility
 - **Data Visualization:** `ggplot2`
-- **Data Tables:** `DT` (DataTables)
-- **Deployment:** Shinylive for static WebAssembly hosting on GitHub Pages
+- **Interactive Tables:** `DT` (DataTables)
+- **Deployment:** Static WebAssembly via **Shinylive** on GitHub Pages
 
 ---
 
-## Application Workflow
+## Project Structure
 
 ```
-1. UPLOAD OR SELECT SAMPLE
-   └── CSV / TSV / RDS Ingestion ──► Delimiter & Encoding Validation
-2. AUTOMATED PROFILING
-   └── Type Inference ──► Missingness ──► Cardinality ──► Memory Size
-3. STATISTICAL AUDIT
-   └── IQR Outliers ──► Correlation Matrix ──► Multicollinearity Alerts
-4. PATTERN & RISK SCREENING
-   └── Target Leakage Signals ──► Cohort Representation Disparities
-5. FINDINGS DOSSIER
-   └── Categorized Cards: HIGH │ MEDIUM │ LOW │ INFO
-6. EXPORT INVESTIGATION REPORT
-   └── Standalone HTML Report & Structured Audit CSVs
+data-detective/
+├── app.R                          # Main Shiny Application Shell & Reactive Orchestrator
+├── DESCRIPTION                    # R Package & Dependency metadata
+├── LICENSE                        # MIT License
+├── README.md                      # Comprehensive project documentation
+│
+├── R/                             # Modular Analytical Engines & UI Modules
+│   ├── transformation_engine.R    # Deterministic cleaning, diff engine, clean_names, currency
+│   ├── feature_engine.R           # Temporal, cyclical, log1p, scaling, ratio, binning, text
+│   ├── recipe_engine.R            # Autonomous recipe synthesizer, executor & R script generator
+│   ├── query_engine.R             # Deterministic natural language query parser
+│   ├── mod_workbench.R            # Interactive Quality Fixing & Feature Studio Workbench
+│   ├── mod_column_studio.R        # Univariate deep drilldown studio
+│   ├── analysis_functions.R       # Centralized statistical and health radar engines
+│   ├── validation_functions.R     # Ingestion validation and delimiter detection
+│   ├── utility_functions.R        # Safe moments, type detection & formatting
+│   ├── mod_overview.R             # Overview KPI cards & preview
+│   ├── mod_quality.R              # Quality score indicator & deductions
+│   ├── mod_missing.R              # Missing value diagnostics
+│   ├── mod_duplicates.R           # Duplicate row diagnostics
+│   ├── mod_outliers.R             # Outlier diagnostics & plots
+│   ├── mod_distributions.R        # Distribution diagnostics
+│   ├── mod_correlation.R          # Correlation heatmaps & alerts
+│   ├── mod_relationships.R        # Bivariate relationship explorer
+│   ├── mod_leakage.R              # Target leakage indicators
+│   ├── mod_bias.R                 # Representation disparity screening
+│   └── mod_report.R               # HTML report export
+│
+├── www/                           # Frontend Assets & CSS Tokens
+│   ├── styles.css                 # Data-Dense styling, diff badges & tabular typography
+│   └── app.js                     # Client-side UI enhancements
+│
+├── sample_data/                   # Benchmark Synthetic Datasets
+│   ├── sample_clean.csv           # Baseline clean HR dataset
+│   ├── sample_messy.csv           # Anomaly dataset (missingness, duplicates, outliers)
+│   └── sample_sales.csv           # Business sales dataset
+│
+└── tests/                         # Automated Unit Tests
+    ├── test_transformations.R     # Unit tests for transformations, features, recipes, queries
+    ├── test_analysis.R            # Core statistical engine tests
+    ├── test_validation.R          # Input validation tests
+    └── test_modules.R             # Module tests
 ```
-
----
-
-## Screenshots
-
-### 1. Executive Dashboard & Quality Indicator
-Real-time KPI metric cards, an automated executive summary narrative, a transparent Data Quality status gauge (scored 0–100 with deduction breakdowns), and an interactive dataset preview table.
-
-![Executive Dashboard Overview](www/assets/dashboard_overview.png)
-
-### 2. Statistical Outliers & Distribution Diagnostics
-Univariate and multivariate diagnostics featuring Tukey $1.5 \times \text{IQR}$ threshold boundary lines, empirical density curves, Pearson correlation heatmaps, and multicollinearity alerts ($|r| \ge 0.70$).
-
-![Statistical Outliers and Correlation Heatmap](www/assets/analytics_investigation.png)
-
-### 3. Dataset Investigation Center Dossier
-A central findings repository categorizing detected data-quality issues into **High**, **Warning**, and **Info** severity tiers, providing transparent numerical evidence, reasoning, and actionable next steps.
-
-![Dataset Investigation Center](www/assets/investigation_center.png)
 
 ---
 
@@ -148,8 +171,6 @@ install.packages(c(
 
 ### Launching the Application
 
-Clone the repository and run:
-
 ```r
 # In R or RStudio console:
 shiny::runApp(".")
@@ -159,7 +180,7 @@ shiny::runApp(".")
 
 ## GitHub Pages Deployment
 
-Data Detective is architected for zero-server **Shinylive** deployment via GitHub Pages.
+Data Detective Pro is architected for zero-server **Shinylive** deployment via GitHub Pages.
 
 An automated GitHub Actions workflow is pre-configured in [`.github/workflows/deploy-shinylive.yaml`](.github/workflows/deploy-shinylive.yaml):
 1. Checks out the repository.
@@ -167,89 +188,13 @@ An automated GitHub Actions workflow is pre-configured in [`.github/workflows/de
 3. Exports the R/Shiny application to static WebAssembly files (`shinylive::export(".", "site")`).
 4. Deploys the static site directly to **GitHub Pages**.
 
-### Enabling GitHub Pages in Repository Settings:
-1. Navigate to your repository on GitHub: `Settings` &gt; `Pages`.
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**.
-3. Push to `main` branch to trigger automated compilation and deployment.
-
 ---
 
-## Limitations
+## Privacy & Security
 
-- **Large Datasets:** While base R handles hundreds of thousands of rows efficiently, browser memory in WebAssembly (Shinylive) performs best on datasets under 100 MB.
-- **Correlation Assumptions:** Pearson correlation measures linear co-movement only; non-linear dependencies may require rank (Spearman) analysis.
-- **Leakage Cues:** Leakage signals are heuristic indicators (name similarity, near-identity, extreme correlation) and require domain verification.
-- **No Automatic Imputation:** Data Detective diagnoses and explains missingness mechanisms; it intentionally does not silently impute or delete rows.
-
----
-
-## Privacy
-
-- **Zero Cloud Egress:** Your dataset is processed entirely in the local R runtime or locally within your browser's WebAssembly sandbox.
-- **No External AI APIs:** No data is sent to OpenAI, Gemini, Claude, or any third-party AI provider.
-- **No Telemetry or Tracking:** Data Detective does not store, log, or track user datasets or analytical outputs.
-
----
-
-## Project Structure
-
-```
-data-detective/
-├── app.R                          # Main Shiny Application with bslib page_sidebar
-├── DESCRIPTION                    # R Package & Dependency metadata
-├── LICENSE                        # MIT License
-├── README.md                      # Comprehensive project documentation
-├── .gitignore                     # R, IDE, and OS exclusions
-├── linkedin.md                    # Ready-to-use LinkedIn announcement copy
-├── image.png                      # Project showcase visual asset
-│
-├── .github/
-│   └── workflows/
-│       └── deploy-shinylive.yaml  # GitHub Actions Shinylive deployment to Pages
-│
-├── R/                             # Modular Analytical Engines & UI Modules
-│   ├── mod_upload.R               # Module 1: Upload & delimiter detection
-│   ├── mod_overview.R             # Module 2: Dimension cards, types table & preview
-│   ├── mod_quality.R              # Module 3: Quality indicator & deductions
-│   ├── mod_missing.R              # Module 4: Missing value diagnostics & filters
-│   ├── mod_duplicates.R           # Module 5: Exact & candidate duplicate inspection
-│   ├── mod_outliers.R             # Module 6: Tukey 1.5x IQR & Z-score outlier analysis
-│   ├── mod_distributions.R        # Module 7: Numerical & categorical distributions
-│   ├── mod_correlation.R          # Module 8: Pearson/Spearman heatmap & alerts
-│   ├── mod_relationships.R        # Module 9: Auto bivariate relationship explorer
-│   ├── mod_leakage.R              # Module 10: Target leakage screening
-│   ├── mod_bias.R                 # Module 11: Representation disparity diagnostics
-│   ├── mod_report.R               # Module 12: Offline HTML investigation report export
-│   ├── analysis_functions.R       # Centralized analytical engines
-│   ├── validation_functions.R     # Input validation and sanitization
-│   └── helper_functions.R         # Safe moments, type detection & formatting
-│
-├── www/                           # Frontend Assets
-│   ├── styles.css                 # Clean modern CSS styling
-│   ├── app.js                     # Client-side JS enhancements
-│   └── assets/                    # Light-theme UI screenshots
-│
-├── sample_data/                   # Benchmark Synthetic Datasets
-│   ├── sample_clean.csv           # Baseline clean HR dataset
-│   ├── sample_messy.csv           # Anomaly dataset (missingness, duplicates, outliers)
-│   └── sample_sales.csv           # Business sales dataset
-│
-└── tests/                         # Automated Unit Tests
-    ├── test_analysis.R            # Core statistical engine tests
-    ├── test_validation.R          # Input validation tests
-    ├── test_modules.R             # Module & scoring tests
-    ├── testthat.R                 # Testthat test driver
-    └── testthat/                  # Testthat specs
-```
-
----
-
-## Future Improvements
-
-- Additional format loaders (Parquet, Arrow, SQLite, DuckDB).
-- Advanced non-parametric distribution tests (Kolmogorov-Smirnov, Shapiro-Wilk).
-- Dataset version comparison and schema drift monitoring.
-- Interactive custom formula transformations.
+- **100% Client/Local Processing**: Your dataset is processed entirely in the local R runtime or locally within your browser's WebAssembly sandbox.
+- **Zero Cloud Egress**: No data ever leaves your computer.
+- **No External AI APIs**: Fully deterministic rule-based algorithms with zero dependency on third-party cloud LLMs.
 
 ---
 
