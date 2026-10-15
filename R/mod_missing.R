@@ -52,22 +52,22 @@ mod_missing_server <- function(id, missing_r) {
 
     # KPI Outputs
     output$total_missing <- renderText({
-      req(missing_r())
+      if (is.null(missing_r())) return("—")
       format_number(missing_r()$total_missing)
     })
 
     output$missing_pct <- renderText({
-      req(missing_r())
+      if (is.null(missing_r())) return("—")
       paste0(missing_r()$missing_pct, "%")
     })
 
     output$complete_cases <- renderText({
-      req(missing_r())
+      if (is.null(missing_r())) return("—")
       paste0(format_number(missing_r()$complete_cases), " (", missing_r()$complete_cases_pct, "%)")
     })
 
     output$incomplete_cases <- renderText({
-      req(missing_r())
+      if (is.null(missing_r())) return("—")
       format_number(missing_r()$incomplete_cases)
     })
 

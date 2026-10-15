@@ -73,37 +73,37 @@ mod_overview_server <- function(id, data_r, profile_r, issues_count_r = NULL) {
 
     # KPI Outputs
     output$kpi_rows <- renderText({
-      req(profile_r())
+      if (is.null(profile_r())) return("—")
       format_number(profile_r()$n_rows)
     })
 
     output$kpi_cols <- renderText({
-      req(profile_r())
+      if (is.null(profile_r())) return("—")
       format_number(profile_r()$n_cols)
     })
 
     output$kpi_mem <- renderText({
-      req(profile_r())
+      if (is.null(profile_r())) return("—")
       profile_r()$memory_formatted
     })
 
     output$kpi_num <- renderText({
-      req(profile_r())
+      if (is.null(profile_r())) return("—")
       as.character(profile_r()$n_numeric)
     })
 
     output$kpi_cat <- renderText({
-      req(profile_r())
+      if (is.null(profile_r())) return("—")
       as.character(profile_r()$n_categorical)
     })
 
     output$kpi_date <- renderText({
-      req(profile_r())
+      if (is.null(profile_r())) return("—")
       as.character(profile_r()$n_date)
     })
 
     output$kpi_const <- renderText({
-      req(profile_r())
+      if (is.null(profile_r())) return("—")
       p <- profile_r()$columns_summary
       as.character(sum(p$is_constant, na.rm = TRUE))
     })

@@ -37,22 +37,22 @@ mod_duplicates_server <- function(id, duplicate_r) {
   moduleServer(id, function(input, output, session) {
 
     output$total_rows <- renderText({
-      req(duplicate_r())
+      if (is.null(duplicate_r())) return("—")
       format_number(duplicate_r()$total_rows)
     })
 
     output$unique_rows <- renderText({
-      req(duplicate_r())
+      if (is.null(duplicate_r())) return("—")
       format_number(duplicate_r()$unique_rows)
     })
 
     output$duplicate_rows <- renderText({
-      req(duplicate_r())
+      if (is.null(duplicate_r())) return("—")
       format_number(duplicate_r()$duplicate_rows_count)
     })
 
     output$duplicate_pct <- renderText({
-      req(duplicate_r())
+      if (is.null(duplicate_r())) return("—")
       paste0(duplicate_r()$duplicate_pct, "%")
     })
 
