@@ -91,17 +91,34 @@ mod_relationships_server <- function(id, data_r) {
       cols <- names(data_r())
       num_cols <- cols[vapply(data_r(), is.numeric, logical(1))]
 
-      if (length(cols) >= 2) {
-        updateSelectInput(session, "var_x", choices = cols, selected = cols[1])
-        updateSelectInput(session, "var_y", choices = cols, selected = cols[2])
-      } else if (length(cols) == 1) {
-        updateSelectInput(session, "var_x", choices = cols, selected = cols[1])
-        updateSelectInput(session, "var_y", choices = cols, selected = cols[1])
-      }
+      sel_x <- if (length(num_cols) >= 1) num_cols[1] else cols[1]
+      sel_y <- if (length(num_cols) >= 2) num_cols[2] else (if (length(cols) >= 2) cols[2] else cols[1])
+      sel_z <- if (length(num_cols) >= 3) num_cols[3] else (if (length(cols) >= 3) cols[3] else cols[1])
 
-      z_choices <- if (length(num_cols) > 0) num_cols else cols
-      z_sel <- if (length(z_choices) >= 3) z_choices[3] else z_choices[1]
-      updateSelectInput(session, "var_z", choices = z_choices, selected = z_sel)
+      updateSelectInput(session, "var_x", choices = cols, selected = sel_x)
+      updateSelectInput(session, "var_y", choices = cols, selected = sel_y)
+      updateSelectInput(session, "var_z", choices = if (length(num_cols) > 0) num_cols else cols, selected = sel_z)
+    })
+
+    # Switch to numeric variables on 3D mode activation if needed
+    observeEvent(input$visual_mode, {
+      req(data_r())
+      if (!is.null(input$visual_mode) && input$visual_mode == "3d") {
+        cols <- names(data_r())
+        num_cols <- cols[vapply(data_r(), is.numeric, logical(1))]
+        if (length(num_cols) >= 3) {
+          cur_x <- input$var_x
+          cur_y <- input$var_y
+          cur_z <- input$var_z
+          if (!is.null(cur_x) && !is.null(cur_y) && !is.null(cur_z)) {
+            if (!(cur_x %in% num_cols && cur_y %in% num_cols && cur_z %in% num_cols)) {
+              updateSelectInput(session, "var_x", selected = num_cols[1])
+              updateSelectInput(session, "var_y", selected = num_cols[2])
+              updateSelectInput(session, "var_z", selected = num_cols[3])
+            }
+          }
+        }
+      }
     })
 
     # Detect pair type

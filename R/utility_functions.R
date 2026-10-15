@@ -216,9 +216,17 @@ project_3d_scatter <- function(df, var_x, var_y, var_z, color_var = NULL, theta 
     return(ggplot2::ggplot() + ggplot2::theme_void())
   }
 
-  vx <- as.numeric(df[[var_x]])
-  vy <- as.numeric(df[[var_y]])
-  vz <- as.numeric(df[[var_z]])
+  to_coord <- function(v) {
+    if (is.numeric(v)) {
+      as.numeric(v)
+    } else {
+      as.numeric(as.factor(v))
+    }
+  }
+
+  vx <- to_coord(df[[var_x]])
+  vy <- to_coord(df[[var_y]])
+  vz <- to_coord(df[[var_z]])
 
   valid_idx <- which(!is.na(vx) & !is.na(vy) & !is.na(vz))
   if (length(valid_idx) < 3) {
