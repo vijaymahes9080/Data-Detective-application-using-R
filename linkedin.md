@@ -6,48 +6,27 @@
 
 ### Post Copy (Ready to Copy-Paste into LinkedIn)
 
-Are you tired of spending 80% of your data science workflow manually hunting down data quality anomalies, hidden duplicate records, and multicollinearity bugs? 🔍
+Most data cleaning scripts start the same way: hunting down silent missing values, checking for duplicate records, and finding out which features are secretly measuring the exact same thing before model training.
 
-Introducing **DATA DETECTIVE** — a full-scale, automated dataset investigation and statistical data quality platform built with **R + Shiny**! 🚀
+To automate that exploratory pass, I built **Data Detective** — an interactive data quality and statistical profiling platform written in R and Shiny.
 
-💡 **Tagline:** *"Upload. Investigate. Understand."*
+The key detail: it runs **100% inside your browser via Shinylive (WebAssembly)**. There is no backend server, no container setup, and your data never leaves your laptop.
 
----
+Here is what it handles under the hood:
 
-### ❓ The Problem It Solves
-Raw tabular datasets often harbor subtle defects: silent missingness patterns, extreme leverage outliers, severe category concentration, near-zero variance features, and data leakage signals. Catching these downstream after model training wastes hundreds of hours.
+- **Instant Dataset Profiling:** Memory footprint, column types, distinct values, and central tendency moments without manual `summary()` calls.
+- **Data Quality Score (0–100):** A deterministic score with clear, itemized deductions for missingness, duplicates, outliers, and constant columns.
+- **Outlier Diagnostics:** Tukey's $1.5 \times \text{IQR}$ fences and Z-score metrics. It flags observations as statistically unusual rather than blindly assuming they are errors.
+- **Correlation & Collinearity Matrix:** Interactive Pearson heatmap with automatic alerts when any feature pair hits $|r| \ge 0.70$.
+- **Leakage & Bias Screening:** Flags post-target naming cues, target duplication, and cohort-level missingness shifts.
+- **Visual Analytics with 3D Depth:** Pure-R isometric 3D projections with azimuth and elevation rotation sliders, alongside standard 2D views.
+- **Reproducible Script Export:** Generates a standalone `pipeline.R` file using pure Base R math, so you can re-run the entire audit headlessly or in CI.
 
-**Data Detective** automates this entire audit upstream — transforming any uploaded CSV into a comprehensive, publication-grade **Dataset Investigation Report** in seconds.
+The project is completely free and open source:
 
----
+👉 **Live In-Browser App:** https://vijaymahes9080.github.io/Data-Detective-application-using-R/  
+👉 **GitHub Repository:** https://github.com/vijaymahes9080/Data-Detective-application-using-R  
 
-### 🛠️ What Makes Data Detective Unique?
-Unlike generic profiling tools or opaque AI chatbots, Data Detective is a **deterministic, rule-based statistical investigation engine**:
+If you work with tabular datasets in R, try it out with one of your messy files. Feedback and suggestions are always welcome!
 
-1. 📊 **Instant Automated Profiling:** Deep profiling of variable types, memory footprint, cardinality, and central tendency moments.
-2. 🏆 **Transparent Data Quality Score:** A composite indicator (0–100) with granular, transparent deductions for missingness, duplicates, outliers, and uninformative variables.
-3. 📈 **Statistical Outlier Diagnostics:** Rigorous Tukey $1.5 \times \text{IQR}$ bounds and standardized Z-score checks. (No blindly calling outliers "errors" — we treat them as statistically unusual observations).
-4. 🔗 **Correlation & Multicollinearity Engine:** Interactive Pearson correlation heatmap matrix, bivariate scatter plots, and automatic alerts for variable pairs with $|r| \ge 0.70$.
-5. 🛡️ **Leakage & Representation Screening:** Detects post-target naming cues, near-identity feature-target duplication, and differential missingness across demographic/transactional cohorts.
-6. 🎯 **Investigation Center Dossier:** Categorized finding cards (High, Warning, Info) detailing *What*, *Evidence*, *Why Investigate*, and *Recommended Action*.
-7. 📄 **Exportable Audit Reports:** One-click download of self-contained HTML reports (offline-ready) and structured audit CSVs.
-
----
-
-### 💻 Tech Stack
-- **Framework:** R + Shiny, `bslib` (Bootstrap 5)
-- **Data Wrangling:** `readr`, `utils`, `stats`, `tools`
-- **Visualization:** `ggplot2`, interactive `DT` (DataTables)
-- **Architecture:** 100% modular separation of analytical engines, UI modules, and report builders.
-
----
-
-### 🔗 Explore the Open-Source Repository
-Check out the full codebase, sample datasets, and documentation on GitHub:  
-👉 **GitHub:** https://github.com/vijaymahes9080/Data-Detective-application-using-R
-
-Special thanks to the R and open-source data science community! Would love to hear your feedback, thoughts, or feature suggestions below! 👇
-
----
-
-#RStats #RShiny #DataScience #DataQuality #MachineLearning #ExploratoryDataAnalysis #Statistics #OpenSource #DataEngineering #Analytics
+#RStats #DataScience #OpenSource #DataQuality
