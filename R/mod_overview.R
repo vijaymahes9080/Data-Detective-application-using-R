@@ -11,11 +11,11 @@ mod_overview_ui <- function(id) {
     # Top KPI Metric Cards Grid
     div(
       class = "metrics-grid mb-3",
-      div(class = "metric-card", div(class = "metric-title", "ROWS"), div(class = "metric-value", textOutput(ns("kpi_rows")))),
-      div(class = "metric-card", div(class = "metric-title", "COLUMNS"), div(class = "metric-value", textOutput(ns("kpi_cols")))),
+      div(class = "metric-card card-primary", div(class = "metric-title", "ROWS"), div(class = "metric-value", textOutput(ns("kpi_rows")))),
+      div(class = "metric-card card-primary", div(class = "metric-title", "COLUMNS"), div(class = "metric-value", textOutput(ns("kpi_cols")))),
       div(class = "metric-card", div(class = "metric-title", "MEMORY FOOTPRINT"), div(class = "metric-value", textOutput(ns("kpi_mem")))),
-      div(class = "metric-card", div(class = "metric-title", "NUMERIC VARS"), div(class = "metric-value", textOutput(ns("kpi_num")))),
-      div(class = "metric-card", div(class = "metric-title", "CATEGORICAL VARS"), div(class = "metric-value", textOutput(ns("kpi_cat")))),
+      div(class = "metric-card card-info", div(class = "metric-title", "NUMERIC VARS"), div(class = "metric-value", textOutput(ns("kpi_num")))),
+      div(class = "metric-card card-info", div(class = "metric-title", "CATEGORICAL VARS"), div(class = "metric-value", textOutput(ns("kpi_cat")))),
       div(class = "metric-card", div(class = "metric-title", "DATE / TIME"), div(class = "metric-value", textOutput(ns("kpi_date")))),
       div(class = "metric-card", div(class = "metric-title", "CONSTANT VARS"), div(class = "metric-value", textOutput(ns("kpi_const")))),
       div(class = "metric-card card-alert", div(class = "metric-title", "INVESTIGATION ISSUES"), div(class = "metric-value", textOutput(ns("kpi_issues"))))

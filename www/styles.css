@@ -14,21 +14,23 @@
   --bg-subtle: #f1f5f9;
   --bg-inset: #e2e8f0;
 
-  /* Sidebar Tokens (Deep Navy / Charcoal) */
+  /* Sidebar Tokens (Deep Navy / Slate 900) */
   --bg-sidebar: #0f172a;
+  --bg-sidebar-elevated: #1e293b;
   --bg-sidebar-hover: #1e293b;
   --bg-sidebar-active: #1e293b;
-  --text-sidebar: #94a3b8;
-  --text-sidebar-bright: #f8fafc;
-  --text-sidebar-muted: #64748b;
+  --text-sidebar: #cbd5e1;
+  --text-sidebar-bright: #ffffff;
+  --text-sidebar-muted: #94a3b8;
   --border-sidebar: #1e293b;
+  --border-sidebar-light: #334155;
 
   /* Typography Tokens */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --text-primary: #0f172a;
   --text-secondary: #334155;
-  --text-muted: #64748b;
+  --text-muted: #475569;
   --text-faint: #94a3b8;
 
   /* Brand Palette (Restrained Tech Blue) */
@@ -38,11 +40,11 @@
   --brand-primary-border: #bfdbfe;
   --brand-navy: #1e3a8a;
 
-  /* Status & Severity Tokens */
+  /* Status & Severity Tokens (WCAG AA/AAA Harmonized) */
   --status-success: #10b981;
   --status-success-bg: #ecfdf5;
   --status-success-border: #a7f3d0;
-  --status-success-text: #065f46;
+  --status-success-text: #047857;
 
   --status-warning: #f59e0b;
   --status-warning-bg: #fffbeb;
@@ -52,7 +54,7 @@
   --status-danger: #ef4444;
   --status-danger-bg: #fef2f2;
   --status-danger-border: #fecaca;
-  --status-danger-text: #991b1b;
+  --status-danger-text: #b91c1c;
 
   --status-info: #0284c7;
   --status-info-bg: #f0f9ff;
@@ -213,14 +215,15 @@ pre {
 .header-dataset-pill {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 4px 10px;
-  background-color: var(--bg-subtle);
-  border: 1px solid var(--border-subtle);
+  gap: 8px;
+  padding: 4px 12px;
+  background-color: var(--status-success-bg);
+  border: 1px solid var(--status-success-border);
   border-radius: var(--radius-pill);
   font-size: 0.775rem;
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--status-success-text);
+  font-weight: 600;
+  box-shadow: var(--shadow-xs);
 }
 
 .header-dataset-pill .dot-indicator {
@@ -228,6 +231,7 @@ pre {
   height: 7px;
   border-radius: 50%;
   background-color: var(--status-success);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
 }
 
 /* Workspace Canvas Padding */
@@ -348,55 +352,75 @@ pre {
 
 /* Sidebar Ingestion & Sample Section */
 .sidebar-ingestion-box {
-  background-color: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-sidebar);
+  background-color: #131d35;
+  border: 1px solid #1e293b;
   border-radius: var(--radius-md);
-  padding: 10px;
+  padding: 12px;
   margin-bottom: 12px;
+}
+
+.sidebar-ingestion-box .form-control {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  font-size: 0.775rem !important;
+}
+
+.sidebar-ingestion-box .form-control::placeholder {
+  color: #94a3b8 !important;
+}
+
+.sidebar-ingestion-box .btn-file {
+  background-color: #2563eb !important;
+  border-color: #3b82f6 !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
 }
 
 .sidebar-sample-btn-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
 }
 
 .sidebar-sample-btn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 5px 8px;
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 8px;
+  padding: 6px 10px;
+  background-color: #1e293b;
+  border: 1px solid #334155;
   border-radius: var(--radius-sm);
-  color: var(--text-sidebar);
-  font-size: 0.75rem;
+  color: #f1f5f9;
+  font-size: 0.775rem;
+  font-weight: 500;
   cursor: pointer;
   transition: all var(--duration-micro) ease;
   text-align: left;
 }
 
 .sidebar-sample-btn:hover {
-  background-color: var(--bg-sidebar-hover);
-  color: var(--text-sidebar-bright);
-  border-color: rgba(255, 255, 255, 0.16);
+  background-color: #334155;
+  color: #ffffff;
+  border-color: #475569;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-status-box {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-sidebar);
+  background-color: #131d35;
+  border: 1px solid #1e293b;
   border-radius: var(--radius-md);
-  padding: 10px;
+  padding: 10px 12px;
   margin-top: 10px;
-  font-size: 0.75rem;
-  color: var(--text-sidebar);
+  font-size: 0.775rem;
+  color: #cbd5e1;
 }
 
 .sidebar-status-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .sidebar-status-row:last-child {
@@ -404,11 +428,11 @@ pre {
 }
 
 .sidebar-status-label {
-  color: var(--text-sidebar-muted);
+  color: #94a3b8;
 }
 
 .sidebar-status-val {
-  color: var(--text-sidebar-bright);
+  color: #f8fafc;
   font-weight: 600;
 }
 
@@ -478,7 +502,7 @@ pre {
 }
 
 /* --------------------------------------------------------------------------
-   KPI Metric Cards (Dense, Crisp, Tabular)
+   KPI Metric Cards (Dense, Crisp, Tabular & Color Harmonized)
    -------------------------------------------------------------------------- */
 .metrics-grid {
   display: grid;
@@ -490,6 +514,7 @@ pre {
 .metric-card {
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
+  border-top: 3px solid #cbd5e1;
   border-radius: var(--radius-md);
   padding: 12px 14px;
   box-shadow: var(--shadow-xs);
@@ -500,7 +525,7 @@ pre {
 }
 
 .metric-card:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   border-color: var(--border-medium);
   box-shadow: var(--shadow-sm);
 }
@@ -509,39 +534,75 @@ pre {
   font-size: 0.675rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-  margin-bottom: 4px;
+  letter-spacing: 0.07em;
+  color: #64748b;
+  margin-bottom: 5px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .metric-value {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--text-primary);
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #0f172a;
   line-height: 1.15;
   letter-spacing: -0.025em;
   font-variant-numeric: tabular-nums;
 }
 
+.metric-card.card-primary {
+  border-top-color: #2563eb;
+  background-color: #ffffff;
+}
+
+.metric-card.card-primary .metric-title {
+  color: #1e40af;
+}
+
+.metric-card.card-primary .metric-value {
+  color: #1d4ed8;
+}
+
+.metric-card.card-info {
+  border-top-color: #0284c7;
+  background-color: #ffffff;
+}
+
+.metric-card.card-info .metric-title {
+  color: #0369a1;
+}
+
+.metric-card.card-info .metric-value {
+  color: #0284c7;
+}
+
 .metric-card.card-alert {
-  border-color: var(--status-danger-border);
-  background-color: var(--status-danger-bg);
+  border-top-color: #dc2626;
+  border-color: #fecaca;
+  background-color: #fef2f2;
+}
+
+.metric-card.card-alert .metric-title {
+  color: #991b1b;
 }
 
 .metric-card.card-alert .metric-value {
-  color: var(--status-danger-text);
+  color: #dc2626;
 }
 
 .metric-card.card-success {
-  border-color: var(--status-success-border);
-  background-color: var(--status-success-bg);
+  border-top-color: #10b981;
+  border-color: #a7f3d0;
+  background-color: #ecfdf5;
+}
+
+.metric-card.card-success .metric-title {
+  color: #065f46;
 }
 
 .metric-card.card-success .metric-value {
-  color: var(--status-success-text);
+  color: #047857;
 }
 
 /* --------------------------------------------------------------------------
@@ -874,6 +935,47 @@ table.dataTable tbody tr:hover td {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   Badges & Severity Chips (WCAG AA/AAA Harmonized)
+   -------------------------------------------------------------------------- */
+.badge {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.badge.bg-danger {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-warning {
+  background-color: #f59e0b !important;
+  color: #0f172a !important;
+}
+
+.badge.bg-info {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-success {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-primary {
+  background-color: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.badge.bg-secondary {
+  background-color: #475569 !important;
+  color: #f8fafc !important;
 }
 
 /* --------------------------------------------------------------------------

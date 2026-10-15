@@ -82,11 +82,13 @@ mod_correlation_server <- function(id, data_r) {
       # Reshape
       melt_df <- as.data.frame(as.table(mat))
       names(melt_df) <- c("Var1", "Var2", "Correlation")
+      melt_df$text_color <- ifelse(abs(melt_df$Correlation) > 0.65, "#ffffff", "#0f172a")
 
       ggplot2::ggplot(melt_df, ggplot2::aes(x = Var1, y = Var2, fill = Correlation)) +
         ggplot2::geom_tile(color = "#ffffff", linewidth = 0.6) +
-        ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", Correlation)), color = "#0f172a", size = 3.6, fontface = "bold") +
-        ggplot2::scale_fill_gradient2(low = "#ef4444", mid = "#f8fafc", high = "#2563eb", midpoint = 0, limits = c(-1, 1), name = "Correlation r") +
+        ggplot2::geom_text(ggplot2::aes(label = sprintf("%.2f", Correlation), color = text_color), size = 3.6, fontface = "bold", show.legend = FALSE) +
+        ggplot2::scale_color_identity() +
+        ggplot2::scale_fill_gradient2(low = "#dc2626", mid = "#f8fafc", high = "#1d4ed8", midpoint = 0, limits = c(-1, 1), name = "Correlation r") +
         theme_detective() +
         ggplot2::theme(
           axis.text.x = ggplot2::element_text(angle = 45, hjust = 1, face = "bold", color = "#1e293b"),

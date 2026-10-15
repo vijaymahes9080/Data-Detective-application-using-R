@@ -94,7 +94,7 @@ mod_missing_server <- function(id, missing_r) {
         ggplot2::geom_text(ggplot2::aes(label = paste0(missing_pct, "%")), hjust = -0.15, size = 3.6, color = "#0f172a", fontface = "bold") +
         ggplot2::coord_flip() +
         ggplot2::scale_fill_manual(
-          values = c("Low" = "#2563eb", "Moderate" = "#f59e0b", "High" = "#ef4444", "Critical" = "#991b1b", "Complete" = "#10b981"),
+          values = c("Low" = "#2563eb", "Moderate" = "#d97706", "High" = "#dc2626", "Critical" = "#991b1b", "Complete" = "#10b981"),
           drop = FALSE
         ) +
         ggplot2::scale_y_continuous(limits = c(0, max(100, max(plot_df$missing_pct) * 1.15))) +

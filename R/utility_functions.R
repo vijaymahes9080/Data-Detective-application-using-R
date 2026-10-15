@@ -147,18 +147,18 @@ severity_badge <- function(severity) {
 detective_colors <- function() {
   c(
     primary      = "#2563eb",
-    primary_dark = "#1e40af",
+    primary_dark = "#1d4ed8",
     secondary    = "#0284c7",
     accent       = "#6366f1",
     teal         = "#0d9488",
     success      = "#10b981",
-    warning      = "#f59e0b",
-    danger       = "#ef4444",
+    warning      = "#d97706",
+    danger       = "#dc2626",
     muted        = "#94a3b8",
     border       = "#e2e8f0",
     grid         = "#f1f5f9",
     text_dark    = "#0f172a",
-    text_muted   = "#64748b"
+    text_muted   = "#475569"
   )
 }
 
@@ -317,7 +317,7 @@ project_3d_scatter <- function(df, var_x, var_y, var_z, color_var = NULL, theta 
       alpha = 0.85
     ) +
     ggplot2::scale_color_gradientn(
-      colors = c("#2563eb", "#06b6d4", "#10b981", "#f59e0b", "#ef4444"),
+      colors = c("#1e40af", "#0284c7", "#10b981", "#d97706", "#dc2626"),
       name = paste0("Z: ", var_z)
     ) +
     ggplot2::scale_size_continuous(range = c(2.2, 5.0), guide = "none") +
