@@ -10,11 +10,11 @@ mod_duplicates_ui <- function(id) {
   tagList(
     # Top KPI Metrics Row
     div(
-      class = "row mb-3",
-      div(class = "col-md-3 col-6 mb-2", div(class = "p-3 bg-white border rounded text-center", div(class = "metric-title", "TOTAL ROWS"), h4(class = "mb-0", textOutput(ns("total_rows"))))),
-      div(class = "col-md-3 col-6 mb-2", div(class = "p-3 bg-white border rounded text-center", div(class = "metric-title", "UNIQUE ROWS"), h4(class = "mb-0 text-success", textOutput(ns("unique_rows"))))),
-      div(class = "col-md-3 col-6 mb-2", div(class = "p-3 bg-white border rounded text-center", div(class = "metric-title", "DUPLICATE ROWS"), h4(class = "mb-0 text-danger", textOutput(ns("duplicate_rows"))))),
-      div(class = "col-md-3 col-6 mb-2", div(class = "p-3 bg-white border rounded text-center", div(class = "metric-title", "DUPLICATE RATE"), h4(class = "mb-0", textOutput(ns("duplicate_pct")))))
+      class = "metrics-grid mb-3",
+      div(class = "metric-card card-primary", div(class = "metric-title", "TOTAL ROWS"), div(class = "metric-value", textOutput(ns("total_rows")))),
+      div(class = "metric-card card-success", div(class = "metric-title", "UNIQUE ROWS"), div(class = "metric-value", textOutput(ns("unique_rows")))),
+      div(class = "metric-card card-alert", div(class = "metric-title", "DUPLICATE ROWS"), div(class = "metric-value", textOutput(ns("duplicate_rows")))),
+      div(class = "metric-card card-alert", div(class = "metric-title", "DUPLICATE RATE"), div(class = "metric-value", textOutput(ns("duplicate_pct"))))
     ),
 
     # Status Banner

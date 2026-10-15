@@ -10,11 +10,11 @@ mod_missing_ui <- function(id) {
   tagList(
     # Top Stats Row
     div(
-      class = "row mb-3",
-      div(class = "col-md-3 col-6 mb-2", div(class = "p-3 bg-white border rounded text-center", div(class = "metric-title", "TOTAL MISSING CELLS"), h4(class = "mb-0", textOutput(ns("total_missing"))))),
-      div(class = "col-md-3 col-6 mb-2", div(class = "p-3 bg-white border rounded text-center", div(class = "metric-title", "OVERALL MISSINGNESS"), h4(class = "mb-0", textOutput(ns("missing_pct"))))),
-      div(class = "col-md-3 col-6 mb-2", div(class = "p-3 bg-white border rounded text-center", div(class = "metric-title", "COMPLETE CASES (ROWS)"), h4(class = "mb-0 text-success", textOutput(ns("complete_cases"))))),
-      div(class = "col-md-3 col-6 mb-2", div(class = "p-3 bg-white border rounded text-center", div(class = "metric-title", "INCOMPLETE ROWS"), h4(class = "mb-0 text-danger", textOutput(ns("incomplete_cases")))))
+      class = "metrics-grid mb-3",
+      div(class = "metric-card", div(class = "metric-title", "TOTAL MISSING CELLS"), div(class = "metric-value", textOutput(ns("total_missing")))),
+      div(class = "metric-card", div(class = "metric-title", "OVERALL MISSINGNESS"), div(class = "metric-value", textOutput(ns("missing_pct")))),
+      div(class = "metric-card card-success", div(class = "metric-title", "COMPLETE CASES (ROWS)"), div(class = "metric-value", textOutput(ns("complete_cases")))),
+      div(class = "metric-card card-alert", div(class = "metric-title", "INCOMPLETE ROWS"), div(class = "metric-value", textOutput(ns("incomplete_cases"))))
     ),
 
     # Chart & Threshold Filter Section

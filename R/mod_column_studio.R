@@ -316,7 +316,7 @@ mod_column_studio_server <- function(id, data_r) {
 
         div(
           class = "metrics-grid mb-2",
-          div(class = "metric-card", div(class = "metric-title", "VALID COUNT"), div(class = "metric-value", format_number(length(num_clean)))),
+          div(class = "metric-card card-primary", div(class = "metric-title", "VALID COUNT"), div(class = "metric-value", format_number(length(num_clean)))),
           div(class = "metric-card", div(class = "metric-title", "MEAN"), div(class = "metric-value", round(mean(num_clean), 3))),
           div(class = "metric-card", div(class = "metric-title", "MEDIAN"), div(class = "metric-value", round(stats::median(num_clean), 3))),
           div(class = "metric-card", div(class = "metric-title", "STD DEV"), div(class = "metric-value", round(stats::sd(num_clean), 3))),
@@ -324,7 +324,7 @@ mod_column_studio_server <- function(id, data_r) {
           div(class = "metric-card", div(class = "metric-title", "MAXIMUM"), div(class = "metric-value", round(max(num_clean), 3))),
           div(class = "metric-card", div(class = "metric-title", "IQR (SPREAD)"), div(class = "metric-value", round(iqr_v, 3))),
           div(class = "metric-card", div(class = "metric-title", "SKEWNESS"), div(class = "metric-value", round(safe_skewness(num_clean), 3))),
-          div(class = "metric-card card-alert", div(class = "metric-title", "OUTLIERS (1.5x)"), div(class = "metric-value", out_v))
+          div(class = if (out_v > 0) "metric-card card-alert" else "metric-card card-success", div(class = "metric-title", "OUTLIERS (1.5x)"), div(class = "metric-value", out_v))
         )
       } else {
         tab <- sort(table(as.character(clean_v)), decreasing = TRUE)
